@@ -9,11 +9,14 @@ import com.weihua.assistant.constant.AssistantType;
 import com.weihua.assistant.entity.request.BaseRequest;
 import com.weihua.assistant.entity.request.Request;
 import com.weihua.assistant.entity.response.Response;
-
+import com.weihua.database.dao.MainDao;
+import com.weihua.database.dao.impl.MainDaoImpl;
 import com.weihua.util.ExceptionUtil;
 
 public class MainAssistant extends BaseAssistant {
 	private static Logger LOGGER = Logger.getLogger(MainAssistant.class);
+	
+	private static MainDao mainDao=new MainDaoImpl();
 
 	public String execute(String request) {
 		BaseRequest baseRequest = new BaseRequest(request);
@@ -25,7 +28,8 @@ public class MainAssistant extends BaseAssistant {
 	@Override
 	public Response getResponse(Request request) {
 		Map<String, Object> model = new HashMap<String, Object>();
-		model.put("userName", request.getContent());
+		model.put("requestContent", request.getContent());
+		model.put("responseContent", mainDao.findAll());
 		return response(model);
 	}
 

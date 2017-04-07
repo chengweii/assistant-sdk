@@ -7,6 +7,8 @@ import com.weihua.util.GsonUtil;
 
 public class BaseRequest implements Request {
 
+	public static final String REQUEST_PARAM_KEY = "requestContent";
+
 	private OriginType originType;
 
 	private AssistantType assistantType;

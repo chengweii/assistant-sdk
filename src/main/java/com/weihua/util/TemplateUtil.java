@@ -13,7 +13,7 @@ import org.beetl.core.resource.StringTemplateResourceLoader;
 
 public class TemplateUtil {
 
-	private static Logger LOGGER = Logger.getLogger(HttpUtil.class);
+	private static Logger LOGGER = Logger.getLogger(TemplateUtil.class);
 
 	private static String CHARSET = "UTF-8";
 
@@ -82,6 +82,10 @@ public class TemplateUtil {
 	}
 
 	public static String renderByTemplateReader(String templateName, Map<String, Object> params) {
+		if (customerReader == null) {
+			LOGGER.error("CustomerReader is not initialized.");
+			throw new RuntimeException("Please firstly call TemplateUtil.initTemplateReader to init customerReader.");
+		}
 		String templateContent = customerReader.getTemplateContent(templateName);
 		return renderByTemplateContent(templateContent, params);
 	}
