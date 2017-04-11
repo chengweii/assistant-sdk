@@ -19,6 +19,8 @@ public class BaseRequest implements Request {
 
 	private String extraInfo;
 
+	private String originRequest;
+
 	public BaseRequest(String request) {
 		deserializeRequest(request);
 	}
@@ -32,6 +34,7 @@ public class BaseRequest implements Request {
 			this.isLocationPath = requestData.isLocationPath;
 			this.requestContent = requestData.requestContent;
 			this.extraInfo = requestData.extraInfo;
+			this.originRequest = request;
 		}
 	}
 
@@ -57,6 +60,10 @@ public class BaseRequest implements Request {
 
 	public Boolean isLocationPath() {
 		return this.isLocationPath;
+	}
+
+	public String getOriginRequest() {
+		return this.originRequest;
 	}
 
 	@Override

@@ -6,8 +6,10 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 
 import com.weihua.assistant.constant.AssistantType;
+import com.weihua.assistant.context.Context;
 import com.weihua.assistant.entity.request.BaseRequest;
 import com.weihua.assistant.entity.request.Request;
+import com.weihua.assistant.entity.response.BaseResponse;
 import com.weihua.assistant.entity.response.Response;
 import com.weihua.database.dao.MainDao;
 import com.weihua.database.dao.impl.MainDaoImpl;
@@ -15,13 +17,19 @@ import com.weihua.util.ExceptionUtil;
 
 public class MainAssistant extends BaseAssistant {
 	private static Logger LOGGER = Logger.getLogger(MainAssistant.class);
-	
-	private static MainDao mainDao=new MainDaoImpl();
+
+	private static MainDao mainDao = new MainDaoImpl();
 
 	public String execute(String request) {
 		BaseRequest baseRequest = new BaseRequest(request);
 		Assistant assistant = assignAssistant(baseRequest);
 		Response response = assistant.getResponse(baseRequest);
+		if (response == null) {
+			response = this.getResponse(baseRequest);
+		}
+
+		Context.recordHistory(baseRequest.getAssistantType(), baseRequest, (BaseResponse) response);
+
 		return response.getContent();
 	}
 
@@ -29,15 +37,14 @@ public class MainAssistant extends BaseAssistant {
 	public Response getResponse(Request request) {
 		Map<String, Object> model = new HashMap<String, Object>();
 		model.put("requestContent", request.getContent());
-		model.put("responseContent", mainDao.findAll());
+		model.put("responseContent", mainDao.findAssistantList());
 		return response(model);
 	}
 
 	private Assistant assignAssistant(BaseRequest baseRequest) {
 		Assistant assistant = this;
 		try {
-			if (baseRequest.getAssistantType() != null
-					&& baseRequest.getAssistantType() != AssistantType.MAIN_ASSISTANT) {
+			if (baseRequest.getAssistantType() != AssistantType.MAIN_ASSISTANT) {
 				Class<?> assistantType = Class.forName(baseRequest.getAssistantType().getValue());
 				assistant = (Assistant) assistantType.newInstance();
 			}
