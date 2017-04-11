@@ -13,9 +13,11 @@ public class BaseRequest implements Request {
 
 	private AssistantType assistantType;
 
-	private String function;
+	public Boolean isLocationPath;
 
 	private String requestContent;
+
+	private String extraInfo;
 
 	public BaseRequest(String request) {
 		deserializeRequest(request);
@@ -27,16 +29,18 @@ public class BaseRequest implements Request {
 		if (requestData != null) {
 			this.assistantType = AssistantType.fromCode(requestData.assistantType);
 			this.originType = OriginType.fromCode(requestData.originType);
-			this.function = requestData.function;
+			this.isLocationPath = requestData.isLocationPath;
 			this.requestContent = requestData.requestContent;
+			this.extraInfo = requestData.extraInfo;
 		}
 	}
 
 	public static class RequestData {
 		public String assistantType;
 		public String originType;
-		public String function;
+		public Boolean isLocationPath;
 		public String requestContent;
+		public String extraInfo;
 	}
 
 	public AssistantType getAssistantType() {
@@ -47,8 +51,12 @@ public class BaseRequest implements Request {
 		return this.originType;
 	}
 
-	public String getFunction() {
-		return this.function;
+	public String getExtraInfo() {
+		return this.extraInfo;
+	}
+
+	public Boolean isLocationPath() {
+		return this.isLocationPath;
 	}
 
 	@Override
