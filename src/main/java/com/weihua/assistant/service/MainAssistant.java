@@ -1,6 +1,7 @@
 package com.weihua.assistant.service;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -36,9 +37,14 @@ public class MainAssistant extends BaseAssistant {
 	@Override
 	public Response getResponse(Request request) {
 		Map<String, Object> model = new HashMap<String, Object>();
-		model.put("requestContent", request.getContent());
-		model.put("responseContent", mainDao.findAssistantList());
-		return response(model);
+		if (request.getContent() == null || request.getContent().equals("") || request.getContent().equals("管家")) {
+			model.put("welcomeMsg", "Hello,Master,What can I do for you?");
+		} else {
+			model.put("welcomeMsg", "Sorry,Master,About \"" + request.getContent()
+					+ "\",I don't know too much yet,but I can provide you with the following help:");
+		}
+		model.put("assistantList", mainDao.findAssistantList());
+		return response(model, "main");
 	}
 
 	private Assistant assignAssistant(BaseRequest baseRequest) {
@@ -47,6 +53,18 @@ public class MainAssistant extends BaseAssistant {
 			if (baseRequest.getAssistantType() != AssistantType.MAIN_ASSISTANT) {
 				Class<?> assistantType = Class.forName(baseRequest.getAssistantType().getValue());
 				assistant = (Assistant) assistantType.newInstance();
+			} else {
+				List<Map<String, Object>> assistantByRelatedWordList = mainDao.findAssistantByRelatedWordList();
+				if (assistantByRelatedWordList != null && assistantByRelatedWordList.size() > 0) {
+					for (Map<String, Object> entity : assistantByRelatedWordList) {
+						if (entity.get("associated_word").equals(baseRequest.getContent())) {
+							Class<?> assistantType = Class
+									.forName(AssistantType.fromCode(entity.get("assistant_id").toString()).getValue());
+							assistant = (Assistant) assistantType.newInstance();
+							break;
+						}
+					}
+				}
 			}
 		} catch (Exception e) {
 			ExceptionUtil.propagate(LOGGER, e);

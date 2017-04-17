@@ -1,6 +1,5 @@
 package com.weihua.assistant.constant;
 
-import com.weihua.assistant.service.BaseAssistant;
 import com.weihua.assistant.service.BingeWatchingAssistant;
 import com.weihua.assistant.service.ConsultationAssistant;
 import com.weihua.assistant.service.DietAssistant;
