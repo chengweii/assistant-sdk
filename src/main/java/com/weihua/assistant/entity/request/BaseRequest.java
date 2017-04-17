@@ -13,7 +13,7 @@ public class BaseRequest implements Request {
 
 	private AssistantType assistantType;
 
-	public Boolean isLocationPath;
+	private Boolean isLocationPath;
 
 	private String requestContent;
 
