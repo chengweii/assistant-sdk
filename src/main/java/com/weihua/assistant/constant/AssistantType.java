@@ -56,4 +56,13 @@ public enum AssistantType {
 		}
 		return MAIN_ASSISTANT;
 	}
+	
+	public static AssistantType fromValue(String value) {
+		for (AssistantType entity : AssistantType.values()) {
+			if (entity.getValue().equals(value)) {
+				return entity;
+			}
+		}
+		return MAIN_ASSISTANT;
+	}
 }

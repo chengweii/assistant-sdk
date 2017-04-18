@@ -4,6 +4,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Map;
 
+import com.weihua.assistant.constant.AssistantType;
 import com.weihua.assistant.entity.request.BaseRequest;
 import com.weihua.assistant.entity.response.BaseResponse;
 import com.weihua.assistant.entity.response.Response;
@@ -17,7 +18,15 @@ public abstract class BaseAssistant implements Assistant {
 
 	private static final String DEFAULT_TEMPLATE = "default";
 
+	private static final String ASSISTANT_NAME = "assistantName";
+
+	private static final String ASSISTANT_TYPE = "assistantType";
+
 	protected Response response(Map<String, Object> model, String templatePath) {
+		if (model != null) {
+			model.put(ASSISTANT_NAME, this.getClass().getSimpleName());
+			model.put(ASSISTANT_TYPE, AssistantType.fromValue(this.getClass().getName()).getCode());
+		}
 		String content = TemplateUtil.renderByTemplateReader(templatePath + TEMPLATE_SUFFIX, model);
 		BaseResponse response = new BaseResponse(content);
 		if (model != null) {
@@ -28,6 +37,10 @@ public abstract class BaseAssistant implements Assistant {
 	}
 
 	protected Response response(Map<String, Object> model) {
+		if (model != null) {
+			model.put(ASSISTANT_NAME, this.getClass().getSimpleName());
+			model.put(ASSISTANT_TYPE, AssistantType.fromValue(this.getClass().getName()).getCode());
+		}
 		String content = TemplateUtil.renderByTemplateReader(DEFAULT_TEMPLATE + TEMPLATE_SUFFIX, model);
 		BaseResponse response = new BaseResponse(content);
 		if (model != null) {

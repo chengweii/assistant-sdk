@@ -33,17 +33,17 @@ public class BaseRequest implements Request {
 			this.originType = OriginType.fromCode(requestData.originType);
 			this.isLocationPath = requestData.isLocationPath;
 			this.requestContent = requestData.requestContent;
-			this.extraInfo = requestData.extraInfo;
+			this.extraInfo = GsonUtil.toJson(requestData.extraInfo);
 			this.originRequest = request;
 		}
 	}
 
-	public static class RequestData {
+	private static class RequestData {
 		public String assistantType;
 		public String originType;
 		public Boolean isLocationPath;
 		public String requestContent;
-		public String extraInfo;
+		public Object extraInfo;
 	}
 
 	public AssistantType getAssistantType() {

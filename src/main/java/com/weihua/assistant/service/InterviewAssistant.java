@@ -37,11 +37,12 @@ public class InterviewAssistant extends BaseAssistant {
 		return response;
 	}
 
+	@ServiceLocation(value = "getSubjectList")
 	public Response getSubjectList(BaseRequest request) {
 		String extraInfo = request.getExtraInfo();
 		Map<String, String> extraInfoMap = GsonUtil.getMapFromJson(extraInfo);
 		int beginRowNum = 0;
-		int rowCount = 5;
+		int rowCount = 3;
 		if (extraInfoMap != null) {
 			beginRowNum = Integer.valueOf(extraInfoMap.get("beginRowNum"));
 			rowCount = Integer.valueOf(extraInfoMap.get("rowCount"));
@@ -52,6 +53,8 @@ public class InterviewAssistant extends BaseAssistant {
 		Map<String, Object> model = new HashMap<String, Object>();
 
 		model.put("subjectList", result);
+		model.put("beginRowNum", result != null && result.size() < rowCount ? beginRowNum : beginRowNum + rowCount);
+		model.put("rowCount", rowCount);
 		return response(model, "interview/index");
 	}
 

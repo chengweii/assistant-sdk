@@ -1,18 +1,19 @@
-<div class="col-md-4" id="interview-assistant-container">
-	<div class="tile">
+<div class="col-md-4 ${assistantName}-container">
 
-		<h2 class="tile-title">Interview assistant</h2>
+	<div class="tile index">
+		<h2 class="tile-title">${assistantName}</h2>
 		<div class="tile-config dropdown">
 			<a data-toggle="dropdown" href="" class="tile-menu"></a>
 			<ul class="dropdown-menu pull-right text-right">
-				<li><a href="">换一批</a></li>
+				<li><a href="javascript:;"
+					class="${assistantName}-changelist-btn">换一批</a></li>
 			</ul>
 		</div>
-
 		<div class="tile-body p-10">
-			<div id="goal-list-key" class="listview narrow">
+			<div class="listview narrow ${assistantName}-list"
+				beginRowNum="${beginRowNum}" rowCount="${rowCount}">
 				<% for(item in subjectList){ %>
-				<div class="media">
+				<div class="media ${assistantName}-item" item-id="${item.id}">
 					<div class="pull-right">
 						<div class="counts"></div>
 					</div>
@@ -23,7 +24,71 @@
 				<%}%>
 			</div>
 		</div>
-
 		<div class="clearfix"></div>
 	</div>
+
+	<div class="tile item" style="display: none;">
+		<h2 class="tile-title">${assistantName}</h2>
+		<div class="tile-config dropdown">
+			<a data-toggle="dropdown" href="" class="tile-menu"></a>
+			<ul class="dropdown-menu pull-right text-right">
+				<li><a href="javascript:;" class="${assistantName}-back-btn">返
+						回</a></li>
+			</ul>
+		</div>
+		<div class="tile-body p-10 ${assistantName}-item-content"></div>
+		<div class="clearfix"></div>
+	</div>
+
+	<style>
+		.${assistantName}-item {
+			cursor: pointer;
+		}
+	</style>
+
+	<script>
+		assistant.keepAssistantContainerUnique('${assistantName}-container');
+	
+		function ${assistantName}ItemClick(){
+			assistant.requestData({
+				assistantType:${assistantType},
+				isLocationPath:true,
+				requestContent : "getSubjectById",
+				extraInfo:{
+					subjectId:$(this).attr("item-id")
+				}
+			}, function(data) {
+				$(".${assistantName}-container .index").hide();
+				$(".${assistantName}-item-content").html(data);
+				$(".${assistantName}-container .item").show();
+			});
+		}
+		
+		function ${assistantName}ChangelistClick(){
+			assistant.requestData({
+				assistantType:${assistantType},
+				isLocationPath:true,
+				requestContent : "getSubjectList",
+				extraInfo:{
+					beginRowNum:$(".${assistantName}-list").attr("beginRowNum"),
+					rowCount:$(".${assistantName}-list").attr("rowCount")
+				}
+			}, function(data) {
+				var list=$(data).find(".index").html();
+				$(".${assistantName}-container .index").html(list);
+				$(".${assistantName}-changelist-btn").click(${assistantName}ChangelistClick);
+				$(".${assistantName}-item").click(${assistantName}ItemClick);
+			});
+		}
+	
+		$(".${assistantName}-changelist-btn").click(${assistantName}ChangelistClick);
+		
+		$(".${assistantName}-item").click(${assistantName}ItemClick);
+		
+		$(".${assistantName}-back-btn").click(function(){
+			$(".${assistantName}-container .item").hide();
+			$(".${assistantName}-container .index").show();
+		});
+	</script>
+
 </div>
