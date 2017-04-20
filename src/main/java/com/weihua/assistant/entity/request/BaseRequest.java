@@ -38,7 +38,7 @@ public class BaseRequest implements Request {
 		}
 	}
 
-	private static class RequestData {
+	public static class RequestData {
 		public String assistantType;
 		public String originType;
 		public Boolean isLocationPath;
@@ -50,12 +50,24 @@ public class BaseRequest implements Request {
 		return this.assistantType;
 	}
 
+	public void getAssistantType(AssistantType assistantType) {
+		this.assistantType = assistantType;
+	}
+
 	public OriginType getOriginType() {
 		return this.originType;
 	}
 
+	public void setOriginType(OriginType originType) {
+		this.originType = originType;
+	}
+
 	public String getExtraInfo() {
 		return this.extraInfo;
+	}
+
+	public void setExtraInfo(String extraInfo) {
+		this.extraInfo = extraInfo;
 	}
 
 	public Boolean isLocationPath() {

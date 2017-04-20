@@ -1,0 +1,52 @@
+<div class="col-md-4 ${assistantName}-container">
+
+	<div class="tile index">
+		<h2 class="tile-title">${assistantName}</h2>
+		<div class="tile-body p-10">
+			<div class="listview narrow ${assistantName}-list">
+				<% for(item in goalList){ %>
+				<div class="media ${assistantName}-item" item-id="${item.goal_name}">
+					<div class="pull-right">
+                         <div class="counts">${item.goal_cost_hours}</div>
+                    </div>
+                    <div class="media-body">
+                        <h6>${item.goal_name}</h6>
+                        <div class="progress progress-small">
+                            <a href="#" data-toggle="tooltip" title="60%" class="progress-bar tooltips progress-bar-danger" style="width: ${item.goal_process}%;" data-original-title="${item.goal_process}%"></a>
+                        </div>
+                    </div>
+				</div>
+				<%}%>
+			</div>
+		</div>
+		<div class="clearfix"></div>
+	</div>
+
+	<style>
+		.${assistantName}-item {
+			cursor: pointer;
+		}
+	</style>
+
+	<script>
+		assistant.keepAssistantContainerUnique('${assistantName}-container');
+	
+		function ${assistantName}ItemClick(){
+			assistant.requestData({
+				assistantType:${assistantType},
+				isLocationPath:true,
+				requestContent : "getStageListByGoalName",
+				extraInfo:{
+					goalName:$(this).attr("goal-name")
+				}
+			}, function(data) {
+				$(".${assistantName}-container .index").hide();
+				$(".${assistantName}-item-content").html(data);
+				$(".${assistantName}-container .item").show();
+			});
+		}
+		
+		$(".${assistantName}-item").click(${assistantName}ItemClick);
+	</script>
+
+</div>

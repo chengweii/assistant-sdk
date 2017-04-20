@@ -180,7 +180,7 @@ public class HttpUtil {
 	}
 
 	public static void main(String[] args) {
-		String content = get("http://www.weather.com.cn/weather/101010100.shtml", null, null);
+		String content = get("http://web.sqt.gtimg.cn/q=sz000651?r=0.6450336522583517",null, 5000, 5000,"GBK");
 		System.out.println(content);
 	}
 

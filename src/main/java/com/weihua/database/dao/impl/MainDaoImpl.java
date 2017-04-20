@@ -48,7 +48,7 @@ public class MainDaoImpl extends BaseDao implements MainDao {
 
 	@Override
 	public int recordAssistantHistory(Object... params) {
-		String sql = "insert into assistant_history(assistant_id,request_content,response_content,create_time) values(?,?,?,?)";
+		String sql = "insert into assistant_history(assistant_id,request_content,service_type,create_time) values(?,?,?,?)";
 		return dBHelper.queryUpdate(LOGGER, sql, params);
 	}
 
@@ -56,6 +56,27 @@ public class MainDaoImpl extends BaseDao implements MainDao {
 	public List<Map<String, Object>> findAssistantByRelatedWordList() {
 		String sql = "select * from assistant_related_word";
 		List<Map<String, Object>> result = dBHelper.queryMapList(LOGGER, sql);
+		return result;
+	}
+
+	@Override
+	public List<Map<String, Object>> findAssistantServiceList() {
+		String sql = "select * from assistant_service_list where status = '1'";
+		List<Map<String, Object>> result = dBHelper.queryMapList(LOGGER, sql);
+		return result;
+	}
+
+	@Override
+	public List<Map<String, Object>> findAssistantHistoryByAssistantId(String assistantId) {
+		String sql = "select * from assistant_history where assistant_id=?";
+		List<Map<String, Object>> result = dBHelper.queryMapList(LOGGER, sql, assistantId);
+		return result;
+	}
+
+	@Override
+	public Map<String, Object> findLastBackAssistantHistory(String assistantId, String requestContent) {
+		String sql = "select * from assistant_history where service_type='2' and assistant_id=? and request_content=? order by create_time desc limit 1";
+		Map<String, Object> result = dBHelper.queryMap(LOGGER, sql, assistantId, requestContent);
 		return result;
 	}
 

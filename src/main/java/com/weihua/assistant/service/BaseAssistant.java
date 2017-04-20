@@ -2,6 +2,7 @@ package com.weihua.assistant.service;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.List;
 import java.util.Map;
 
 import com.weihua.assistant.constant.AssistantType;
@@ -22,32 +23,85 @@ public abstract class BaseAssistant implements Assistant {
 
 	private static final String ASSISTANT_TYPE = "assistantType";
 
+	private static List<Map<String, Object>> assistantList = null;
+
 	protected Response response(Map<String, Object> model, String templatePath) {
-		if (model != null) {
-			model.put(ASSISTANT_NAME, this.getClass().getSimpleName());
-			model.put(ASSISTANT_TYPE, AssistantType.fromValue(this.getClass().getName()).getCode());
-		}
+		bindCommonInfo(model);
+
 		String content = TemplateUtil.renderByTemplateReader(templatePath + TEMPLATE_SUFFIX, model);
 		BaseResponse response = new BaseResponse(content);
 		if (model != null) {
 			String modelJson = GsonUtil.toJson(model);
 			response.setMetaData(modelJson);
 		}
+
 		return response;
 	}
 
 	protected Response response(Map<String, Object> model) {
-		if (model != null) {
-			model.put(ASSISTANT_NAME, this.getClass().getSimpleName());
-			model.put(ASSISTANT_TYPE, AssistantType.fromValue(this.getClass().getName()).getCode());
-		}
+		bindCommonInfo(model);
+
 		String content = TemplateUtil.renderByTemplateReader(DEFAULT_TEMPLATE + TEMPLATE_SUFFIX, model);
 		BaseResponse response = new BaseResponse(content);
 		if (model != null) {
 			String modelJson = GsonUtil.toJson(model);
 			response.setMetaData(modelJson);
 		}
+
 		return response;
+	}
+
+	protected Response responseJson(Map<String, Object> model) {
+		String modelJson = "{}";
+
+		bindCommonInfo(model);
+
+		if (model != null)
+			modelJson = GsonUtil.toJson(model);
+
+		BaseResponse response = new BaseResponse(modelJson);
+		response.setMetaData(modelJson);
+
+		return response;
+	}
+
+	protected Response responseJson(Object model) {
+		String modelJson = "{}";
+
+		if (model != null)
+			modelJson = GsonUtil.toJson(model);
+
+		BaseResponse response = new BaseResponse(modelJson);
+		response.setMetaData(modelJson);
+
+		return response;
+	}
+
+	private void bindCommonInfo(Map<String, Object> model) {
+		if (model != null) {
+			String code = AssistantType.fromValue(this.getClass().getName()).getCode();
+			model.put(ASSISTANT_NAME, getAssistantNameFromAssistantMap(code));
+			model.put(ASSISTANT_TYPE, code);
+		}
+	}
+
+	private String getAssistantNameFromAssistantMap(String code) {
+		if (assistantList != null) {
+			for (Map<String, Object> item : assistantList) {
+				if (code.equals(String.valueOf(item.get("id")))) {
+					return String.valueOf(item.get("assistant_name"));
+				}
+			}
+		}
+		return "";
+	}
+
+	protected static void setAssistantMap(List<Map<String, Object>> assistantList) {
+		BaseAssistant.assistantList = assistantList;
+	}
+
+	protected static List<Map<String, Object>> getAssistantMap() {
+		return BaseAssistant.assistantList;
 	}
 
 	protected Response invokeLocationMethod(BaseRequest request)

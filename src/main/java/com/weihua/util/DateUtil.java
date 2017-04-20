@@ -132,11 +132,19 @@ public class DateUtil {
 	/**
 	 * 获取当前日期(yyyy-MM-dd)
 	 * 
-	 * @param date
 	 * @return
 	 */
 	public static Date getNowDate() {
 		return DateUtil.getDateFormat(dateFormat.format(new Date()));
+	}
+
+	/**
+	 * 获取当前日期(yyyy-MM-dd HH:mm:ss )
+	 * 
+	 * @return
+	 */
+	public static Date getNowDateTime() {
+		return new Date();
 	}
 
 	/**
@@ -337,4 +345,33 @@ public class DateUtil {
 		c.add(Calendar.MONTH, -monty);
 		return c.getTime();
 	}
+
+	/**
+	 * 比较日期大小
+	 * 
+	 * @param date1
+	 * @param date2
+	 * @return
+	 */
+	public static int compareDate(Date date1, Date date2) {
+		if (date1.getTime() > date2.getTime()) {
+			return 1;
+		} else if (date1.getTime() < date2.getTime()) {
+			return -1;
+		} else {
+			return 0;
+		}
+	}
+
+	/**
+	 * 获取时间差（秒）
+	 * 
+	 * @param date1
+	 * @param date2
+	 * @return
+	 */
+	public static long getDateDiff(Date date1, Date date2) {
+		return (date1.getTime() - date2.getTime()) / 1000;
+	}
+
 }
