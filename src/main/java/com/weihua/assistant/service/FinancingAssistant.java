@@ -1,6 +1,7 @@
 package com.weihua.assistant.service;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,7 +35,7 @@ public class FinancingAssistant extends BaseAssistant {
 		try {
 			BaseRequest baseRequest = (BaseRequest) request;
 			if (baseRequest.isLocationPath() == null || baseRequest.isLocationPath() == false) {
-				// response = getSharesChanges((BaseRequest) request);
+				response = getSharesConfig((BaseRequest) request);
 			} else {
 				response = invokeLocationMethod((BaseRequest) request);
 			}
@@ -42,6 +43,14 @@ public class FinancingAssistant extends BaseAssistant {
 			ExceptionUtil.propagate(LOGGER, e);
 		}
 		return response;
+	}
+
+	@ServiceLocation(value = "getSharesConfig")
+	public Response getSharesConfig(BaseRequest request) {
+		List<Map<String, Object>> result = financingDao.findAlarmSharesList();
+		Map<String, Object> model = new HashMap<String, Object>();
+		model.put("sharesList", result);
+		return response(model, "financing/shares");
 	}
 
 	@ServiceLocation(value = "getSharesChanges")
@@ -68,16 +77,13 @@ public class FinancingAssistant extends BaseAssistant {
 
 		StringBuilder sb = new StringBuilder();
 
-		String content;
 		Map<String, String> map;
 		Double temp;
 		String alarmMsg = "";
 		List<Double> alarmValue = new ArrayList<Double>();
 		List<Map<String, Object>> result = financingDao.findAlarmSharesList();
 		for (Map<String, Object> item : result) {
-			content = HttpUtil.get("http://web.sqt.gtimg.cn/q=" + item.get("share_code") + "?r=0.6450336522583517",
-					null, 5000, 5000, "GBK");
-			map = getQuotInfo(content);
+			map = getQuotInfo(item.get("share_code").toString());
 
 			if (map.size() > 0) {
 				ShareConfig shareConfig = GsonUtil.getEntityFromJson(String.valueOf(item.get("alarm_config")),
@@ -150,24 +156,30 @@ public class FinancingAssistant extends BaseAssistant {
 
 	}
 
-	private static Map<String, String> getQuotInfo(String content) {
+	private static Map<String, String> getQuotInfo(String shareCode) {
 		Map<String, String> map = new HashMap<String, String>();
-		String result = content.substring(content.indexOf("\"") + 1, content.length() - 2);
-		if (result.contains("|")) {
-			String[] array = result.split("\\|");
+		Calendar cal = Calendar.getInstance();
+		double hour = cal.get(Calendar.HOUR_OF_DAY) + cal.get(Calendar.MINUTE) / 60.0;
+		if ((hour >= 9.5 && hour < 11.5) || (hour >= 13 && hour <= 15)) {
+			String content = HttpUtil.get("http://web.sqt.gtimg.cn/q=" + shareCode + "?r=0.6450336522583517", null, 5000,
+					5000, "GBK");
+			String result = content.substring(content.indexOf("\"") + 1, content.length() - 2);
+			if (result.contains("|")) {
+				String[] array = result.split("\\|");
 
-			String[] temp = array[0].split("~");
-			map.put("quotName", temp[1]);
-			map.put("quotCode", temp[2]);
+				String[] temp = array[0].split("~");
+				map.put("quotName", temp[1]);
+				map.put("quotCode", temp[2]);
 
-			String lastPrice = array[0].substring(array[0].lastIndexOf("~") + 1);
-			temp = lastPrice.split("\\/");
-			map.put("quotTime", temp[0]);
-			map.put("quotPrice", temp[1]);
+				String lastPrice = array[0].substring(array[0].lastIndexOf("~") + 1);
+				temp = lastPrice.split("\\/");
+				map.put("quotTime", temp[0]);
+				map.put("quotPrice", temp[1]);
 
-			String lastMovement = array[array.length - 1].substring(array[array.length - 1].indexOf("~") + 1);
-			temp = lastMovement.split("~");
-			map.put("quotMovement", temp[2]);
+				String lastMovement = array[array.length - 1].substring(array[array.length - 1].indexOf("~") + 1);
+				temp = lastMovement.split("~");
+				map.put("quotMovement", temp[2]);
+			}
 		}
 		return map;
 	}

@@ -36,7 +36,7 @@ public class MainAssistant extends BaseAssistant {
 			response = this.getResponse(baseRequest);
 		}
 
-		if (!baseRequest.isLocationPath()) {
+		if (baseRequest.isLocationPath() == null) {
 			Context.recordHistory(baseRequest.getAssistantType(), ServiceType.FRONT_SERVICE, baseRequest,
 					(BaseResponse) response);
 		}
@@ -50,7 +50,7 @@ public class MainAssistant extends BaseAssistant {
 		try {
 			BaseRequest baseRequest = (BaseRequest) request;
 			if (baseRequest.isLocationPath() == null || baseRequest.isLocationPath() == false) {
-				toHome((BaseRequest) request);
+				response = toHome((BaseRequest) request);
 			} else {
 				response = invokeLocationMethod((BaseRequest) request);
 			}
