@@ -76,16 +76,14 @@
 			}, function(data) {
 				var list=$(data).find(".index").html();
 				$(".${assistantName}-container .index").html(list);
-				$(".${assistantName}-changelist-btn").click(${assistantName}ChangelistClick);
-				$(".${assistantName}-item").click(${assistantName}ItemClick);
 			});
 		}
 	
-		$(".${assistantName}-changelist-btn").click(${assistantName}ChangelistClick);
+		$(document).on('click',".${assistantName}-changelist-btn",${assistantName}ChangelistClick);
 		
-		$(".${assistantName}-item").click(${assistantName}ItemClick);
+		$(document).on('click',".${assistantName}-item",${assistantName}ItemClick);
 		
-		$(".${assistantName}-back-btn").click(function(){
+		$(".${assistantName}-back-btn").on('click',function(){
 			$(".${assistantName}-container .item").hide();
 			$(".${assistantName}-container .index").show();
 		});
