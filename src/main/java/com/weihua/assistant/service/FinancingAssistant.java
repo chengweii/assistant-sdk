@@ -8,7 +8,6 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 
 import com.google.gson.reflect.TypeToken;
-import com.weihua.assistant.constant.AssistantConstant;
 import com.weihua.assistant.context.Context;
 import com.weihua.assistant.context.Context.HistoryRecord;
 import com.weihua.assistant.entity.alarm.AlarmInfo;
@@ -53,19 +52,34 @@ public class FinancingAssistant extends BaseAssistant {
 
 		if (lastHistoryRecord == null || DateUtil.getDateDiff(DateUtil.getNowDateTime(),
 				lastHistoryRecord.getCreateTime()) > Long.valueOf(timeConfig.get("rate"))) {
-			StringBuilder sb = new StringBuilder();
+			String msg = getQuotChangesMsg();
+			if (msg.length() > 0) {
+				AlarmInfo model = new AlarmInfo();
+				model.setTitle("Shares changes warnning");
+				model.setContent(msg);
+				// model.setIcon("icon");
+				return responseJson(model);
+			}
+		}
+		return null;
+	}
 
-			String content;
-			Map<String, String> map;
-			Double temp;
-			String alarmMsg = "";
-			List<Double> alarmValue = new ArrayList<Double>();
-			List<Map<String, Object>> result = financingDao.findAlarmSharesList();
-			for (Map<String, Object> item : result) {
-				content = HttpUtil.get("http://web.sqt.gtimg.cn/q=" + item.get("share_code") + "?r=0.6450336522583517",
-						null, 5000, 5000, "GBK");
-				map = getQuotInfo(content);
+	private static String getQuotChangesMsg() {
 
+		StringBuilder sb = new StringBuilder();
+
+		String content;
+		Map<String, String> map;
+		Double temp;
+		String alarmMsg = "";
+		List<Double> alarmValue = new ArrayList<Double>();
+		List<Map<String, Object>> result = financingDao.findAlarmSharesList();
+		for (Map<String, Object> item : result) {
+			content = HttpUtil.get("http://web.sqt.gtimg.cn/q=" + item.get("share_code") + "?r=0.6450336522583517",
+					null, 5000, 5000, "GBK");
+			map = getQuotInfo(content);
+
+			if (map.size() > 0) {
 				ShareConfig shareConfig = GsonUtil.getEntityFromJson(String.valueOf(item.get("alarm_config")),
 						new TypeToken<ShareConfig>() {
 						});
@@ -125,40 +139,36 @@ public class FinancingAssistant extends BaseAssistant {
 				}
 
 				if (itemSb.length() > 0) {
-					sb.append(map.get("quotName")).append("[").append(map.get("quotCode")).append("]");
+					sb.append(map.get("quotName")).append("[").append(map.get("quotCode")).append("]").append(":")
+							.append(itemSb);
 					financingDao.modifyAlarmShares(GsonUtil.toJson(shareConfig), 0, item.get("id"));
 				}
 			}
-
-			if (sb.length() > 0) {
-				AlarmInfo model = new AlarmInfo();
-				model.setTitle("Shares changes warnning");
-				model.setContent(sb.toString());
-				// model.setIcon("icon");
-				return responseJson(model);
-			}
-
 		}
-		return null;
+
+		return sb.toString();
+
 	}
 
 	private static Map<String, String> getQuotInfo(String content) {
 		Map<String, String> map = new HashMap<String, String>();
 		String result = content.substring(content.indexOf("\"") + 1, content.length() - 2);
-		String[] array = result.split("\\|");
+		if (result.contains("|")) {
+			String[] array = result.split("\\|");
 
-		String[] temp = array[0].split("~");
-		map.put("quotName", temp[1]);
-		map.put("quotCode", temp[2]);
+			String[] temp = array[0].split("~");
+			map.put("quotName", temp[1]);
+			map.put("quotCode", temp[2]);
 
-		String lastPrice = array[0].substring(array[0].lastIndexOf("~") + 1);
-		temp = lastPrice.split("\\/");
-		map.put("quotTime", temp[0]);
-		map.put("quotPrice", temp[1]);
+			String lastPrice = array[0].substring(array[0].lastIndexOf("~") + 1);
+			temp = lastPrice.split("\\/");
+			map.put("quotTime", temp[0]);
+			map.put("quotPrice", temp[1]);
 
-		String lastMovement = array[array.length - 1].substring(array[array.length - 1].indexOf("~") + 1);
-		temp = lastMovement.split("~");
-		map.put("quotMovement", temp[2]);
+			String lastMovement = array[array.length - 1].substring(array[array.length - 1].indexOf("~") + 1);
+			temp = lastMovement.split("~");
+			map.put("quotMovement", temp[2]);
+		}
 		return map;
 	}
 
