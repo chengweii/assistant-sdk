@@ -7,12 +7,12 @@
 				<% for(item in goalList){ %>
 				<div class="media ${assistantName}-item" goal-name="${item.goal_name}">
 					<div class="pull-right">
-                         <div class="counts">${item.goal_cost_hours*item.goal_process/100}/${item.goal_cost_hours} h</div>
+                         <div class="counts">${item.goal_cost_hours*item.goal_progress/100}/${item.goal_cost_hours} h</div>
                     </div>
                     <div class="media-body">
                         <h6>${item.goal_name}</h6>
                         <div class="progress progress-small">
-                            <a href="#" data-toggle="tooltip" title="${item.goal_process}%" class="progress-bar tooltips progress-bar-danger" style="width: ${item.goal_process}%;" data-original-title="${item.goal_process}%"></a>
+                            <a href="#" data-toggle="tooltip" title="${item.goal_progress}%" class="progress-bar tooltips progress-bar-danger" style="width: ${item.goal_progress}%;" data-original-title="${item.goal_progress}%"></a>
                         </div>
                     </div>
 				</div>
@@ -40,11 +40,11 @@
 					goalName:$(this).attr("goal-name")
 				}
 			}, function(data) {
-				$(".${assistantName}-container").html(data);
+				assistant.appendMainContainerUnique(data,'${assistantName}-container');
 			});
 		}
 		
-		$(document).on('click',".${assistantName}-item .tile",${assistantName}ItemClick);
+		$(".${assistantName}-item").click(${assistantName}ItemClick);
 	</script>
 
 </div>

@@ -1,56 +1,70 @@
+<div class="col-md-4 ${assistantName}-container">
+	<div class="tile">
+		<h2 class="tile-title">${assistantName}</h2>
+		<div class="tile-config dropdown">
+			<a data-toggle="dropdown" href="" class="tile-menu"></a>
+			<ul class="dropdown-menu pull-right text-right">
+				<li><a href="javascript:;" class="${assistantName}-back-btn"
+					goal-name="${stage.goal_name}">返 回</a></li>
+			</ul>
+		</div>
+		<div class="tile-body p-10">
+			<form role="form" class="${assistantName}-form">
+				<div class="form-group">
+					<label for="exampleInputEmail1">stage_cost_hours</label>
+					<div class="p-relative">
+						<input type="text"
+							class="form-control input-sm spinedit stage_cost_hours"
+							data-spinedit-max="500" />
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="exampleInputEmail1">progress</label> <input type="text"
+						class="input-slider progress" data-slider-min="0"
+						data-slider-max="100" data-slider-value="1">
+				</div>
+				<div class="form-group">
+					<label for="exampleInputEmail1">remark</label>
+					<textarea class="form-control input-sm remark"
+						placeholder="Enter remark"></textarea>
+				</div>
 
-<h2 class="tile-title">${assistantName}</h2>
-<div class="tile-config dropdown">
-	<a data-toggle="dropdown" href="" class="tile-menu"></a>
-	<ul class="dropdown-menu pull-right text-right">
-		<li><a href="javascript:;" class="${assistantName}-back-btn">返回</a></li>
-	</ul>
-</div>
-<div class="tile-body p-10 ${assistantName}-item-content"></div>
-<div class="clearfix"></div>
+				<button type="submit" class="btn btn-sm m-t-10">Save</button>
+				<button type="submit" class="btn btn-sm m-t-10">Cancel</button>
+			</form>
+		</div>
+		<div class="clearfix"></div>
+	</div>
 
-<style>
+	<style>
 </style>
 
-<script>
-		assistant.keepAssistantContainerUnique('${assistantName}-container');
-	
-		function ${assistantName}ItemClick(){
+	<script>
+		$(".${assistantName}-back-btn").click(function(){
 			assistant.requestData({
 				assistantType:${assistantType},
 				isLocationPath:true,
-				requestContent : "getSubjectById",
+				requestContent : "getStageListByGoalName",
 				extraInfo:{
-					subjectId:$(this).attr("item-id")
+					goalName:$(this).attr("goal-name")
 				}
 			}, function(data) {
-				$(".${assistantName}-container .index").hide();
-				$(".${assistantName}-item-content").html(data);
-				$(".${assistantName}-container .item").show();
+				assistant.appendMainContainerUnique(data,'${assistantName}-container');
 			});
-		}
-		
-		function ${assistantName}ChangelistClick(){
-			assistant.requestData({
-				assistantType:${assistantType},
-				isLocationPath:true,
-				requestContent : "getSubjectList",
-				extraInfo:{
-					beginRowNum:$(".${assistantName}-list").attr("beginRowNum"),
-					rowCount:$(".${assistantName}-list").attr("rowCount")
-				}
-			}, function(data) {
-				var list=$(data).find(".index").html();
-				$(".${assistantName}-container .index").html(list);
-			});
-		}
-	
-		$(document).on('click',".${assistantName}-changelist-btn",${assistantName}ChangelistClick);
-		
-		$(document).on('click',".${assistantName}-item",${assistantName}ItemClick);
-		
-		$(".${assistantName}-back-btn").on('click',function(){
-			$(".${assistantName}-container .item").hide();
-			$(".${assistantName}-container .index").show();
 		});
+		
+		if ($('.input-slider')[0]) {
+			$('.input-slider').slider().on('slide', function(ev) {
+				// $(this).closest('.slider-container').find('.slider-value').val(ev.value);
+			});
+		}
+		
+		if ($('.spinner')[0]) {
+			$('.spinner').each(function() {
+				var max = $(this).attr("data-spinner-max");
+				$(this).spinedit('setMaxmum', max ? max : 100);
+			});
+		}
 	</script>
+
+</div>
