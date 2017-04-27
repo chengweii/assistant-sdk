@@ -13,7 +13,7 @@ public class GoalDaoImpl extends BaseDao implements GoalDao {
 
 	@Override
 	public List<Map<String, Object>> findGoalList() {
-		String sql = "select t.goal_name,sum(t.stage_cost_hours) as goal_cost_hours,floor(sum(t.stage_cost_hours*t.progress)/sum(t.stage_cost_hours)) as goal_progress from my_goal t GROUP BY t.goal_name";
+		String sql = "select t.goal_name,sum(t.stage_cost_hours) as goal_cost_hours,round(sum(t.stage_cost_hours*t.progress)/sum(t.stage_cost_hours)) as goal_progress from my_goal t GROUP BY t.goal_name";
 		List<Map<String, Object>> result = dBHelper.queryMapList(LOGGER, sql);
 		return result;
 	}

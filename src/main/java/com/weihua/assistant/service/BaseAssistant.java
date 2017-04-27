@@ -23,6 +23,8 @@ public abstract class BaseAssistant implements Assistant {
 
 	private static final String ASSISTANT_TYPE = "assistantType";
 
+	private static final String ASSISTANT_TITLE = "assistantTitle";
+
 	private static List<Map<String, Object>> assistantList = null;
 
 	protected Response response(Map<String, Object> model, String templatePath) {
@@ -80,7 +82,8 @@ public abstract class BaseAssistant implements Assistant {
 	private void bindCommonInfo(Map<String, Object> model) {
 		if (model != null) {
 			String code = AssistantType.fromValue(this.getClass().getName()).getCode();
-			model.put(ASSISTANT_NAME, getAssistantNameFromAssistantMap(code));
+			model.put(ASSISTANT_NAME, this.getClass().getSimpleName());
+			model.put(ASSISTANT_TITLE, getAssistantNameFromAssistantMap(code));
 			model.put(ASSISTANT_TYPE, code);
 		}
 	}
