@@ -41,6 +41,13 @@ public class GoalAssistant extends BaseAssistant {
 	public Response getGoalList(BaseRequest request) {
 		List<Map<String, Object>> result = goalDao.findGoalList();
 
+		if (result != null) {
+			for (Map<String, Object> item : result) {
+				item.put("progress_cost_hours", (int) (Double.parseDouble(item.get("goal_cost_hours").toString())
+						* Double.parseDouble(item.get("goal_progress").toString()) / 100));
+			}
+		}
+
 		Map<String, Object> model = new HashMap<String, Object>();
 
 		model.put("goalList", result);
@@ -53,6 +60,13 @@ public class GoalAssistant extends BaseAssistant {
 		Map<String, String> extraInfoMap = GsonUtil.getMapFromJson(extraInfo);
 		String goalName = extraInfoMap.get("goalName") != null ? extraInfoMap.get("goalName") : "";
 		List<Map<String, Object>> result = goalDao.findStageListByGoalName(goalName);
+
+		if (result != null) {
+			for (Map<String, Object> item : result) {
+				item.put("progress_cost_hours", (int) (Double.parseDouble(item.get("stage_cost_hours").toString())
+						* Double.parseDouble(item.get("progress").toString()) / 100));
+			}
+		}
 
 		Map<String, Object> model = new HashMap<String, Object>();
 

@@ -1,4 +1,4 @@
-<div class="col-md-4 ${assistantName}-container" name="${assistantName}-container">
+<div class="col-md-4 ${assistantName}-container" animate="true">
 
 	<div class="tile">
 		<h2 class="tile-title">${assistantTitle}</h2>
@@ -7,7 +7,7 @@
 				<% for(item in goalList){ %>
 				<div class="media ${assistantName}-item" goal-name="${item.goal_name}">
 					<div class="pull-right">
-                         <div class="counts">${item.goal_cost_hours*item.goal_progress/100}/${item.goal_cost_hours} h</div>
+                         <div class="counts">${item.progress_cost_hours}/${item.goal_cost_hours} h</div>
                     </div>
                     <div class="media-body">
                         <h6>${item.goal_name}</h6>
@@ -40,7 +40,7 @@
 					goalName:$(this).attr("goal-name")
 				}
 			}, function(data) {
-				assistant.appendMainContainerUnique(data,'${assistantName}-container');
+				assistant.appendContainer(data,'${assistantName}-container');
 			});
 		}
 		
