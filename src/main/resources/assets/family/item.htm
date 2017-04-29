@@ -3,65 +3,92 @@
 	<div class="tile-config dropdown">
 		<a data-toggle="dropdown" href="" class="tile-menu"></a>
 		<ul class="dropdown-menu pull-right text-right">
-			<li><a href="javascript:;" class="${assistantName}-back-btn"
-				goal-name="${stage.goal_name}">返 回</a></li>
+			<li><a href="javascript:;" class="back-btn">返 回</a></li>
 		</ul>
 	</div>
-	<div class="tile-body p-10">
-		<form role="form" class="${assistantName}-form">
-			<div class="form-group">
-				<label for="exampleInputEmail1">stage_cost_hours</label>
-				<div class="p-relative">
-					<input type="text"
-						class="form-control input-sm spinedit stage_cost_hours"
-						data-spinedit-max="500" />
-				</div>
-			</div>
-			<div class="form-group">
-				<label for="exampleInputEmail1">progress</label> <input type="text"
-					class="input-slider progress" data-slider-min="0"
-					data-slider-max="100" data-slider-value="1">
-			</div>
-			<div class="form-group">
-				<label for="exampleInputEmail1">remark</label>
-				<textarea class="form-control input-sm remark"
-					placeholder="Enter remark"></textarea>
-			</div>
+	<div class="p-10">
+        <div class="row">
+            <div class="col-md-12 col-xs-12">
+                <div class="p-15">
+                    <form role="form">
+                        <div class="form-group">
+                            <label>分类</label>
+                            <select class="select" class="type_name">
+                                <option>琐事</option>
+                                <option>待办</option>
+                            </select>
+                        </div>
 
-			<button type="submit" class="btn btn-sm m-t-10">Save</button>
-			<button type="submit" class="btn btn-sm m-t-10">Cancel</button>
-		</form>
-	</div>
+                        <div class="form-group">
+                            <label>时间</label>
+                            <input type="time" class="form-control input-sm record_time" placeholder="时间" value="${record.record_time}">
+                        </div>
+
+                        <div class="form-group">
+                            <label>记录概要</label>
+                            <input type="text" class="form-control input-sm record_title" placeholder="..." value="${record.record_title}">
+                        </div>
+
+                        <div class="form-group">
+                            <label>记录详细</label>
+                            <textarea class="form-control auto-size input-sm record_content" placeholder="..." style="overflow: hidden; word-wrap: break-word; resize: none; height: 48px;">${record.record_content}</textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label>优化建议</label>
+                            <textarea class="form-control auto-size input-sm optimization" placeholder="..." style="overflow: hidden; word-wrap: break-word; resize: none; height: 48px;">${record.optimization}</textarea>
+                        </div>
+
+                        <button type="button" class="btn btn-sm m-t-10 save-btn">Save</button>
+                        <button type="button" class="btn btn-sm m-t-10 cancel-btn">Cancel</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 	<div class="clearfix"></div>
 </div>
 
 <style>
 </style>
 
-	<script>
-	$(".${assistantName}-back-btn").click(function(){
+<script>
+	function ${assistantName}Back(){
 		assistant.requestData({
 			assistantType:${assistantType},
 			isLocationPath:true,
-			requestContent : "getStageListByGoalName",
+			requestContent : "getRecordListByWord",
 			extraInfo:{
-				goalName:$(this).attr("goal-name")
+				word:""
 			}
 		}, function(data) {
-			assistant.appendContainer(data,'${assistantName}-container');
+			assistant.appendContainer($(data).html(),'${assistantName}-container');
 		});
-	});
+	}
+
+	$(".${assistantName}-container .back-btn").click(${assistantName}Back);
+	$(".${assistantName}-container .cancel-btn").click(${assistantName}Back);
 	
-	if ($('.input-slider')[0]) {
-		$('.input-slider').slider().on('slide', function(ev) {
-			// $(this).closest('.slider-container').find('.slider-value').val(ev.value);
+	function ${assistantName}Save(){
+		assistant.requestData({
+			assistantType:${assistantType},
+			isLocationPath:true,
+			requestContent : "saveRecord",
+			extraInfo:{
+				type_name:$(".${assistantName} .type_name").val(),
+				record_time:$(".${assistantName} .record_time").val(),
+				record_title:$(".${assistantName} .record_title").val(),
+				record_content:$(".${assistantName} .record_content").val(),
+				optimization:$(".${assistantName} .optimization").val()
+			}
+		}, function(data) {
+			assistant.modal.alert(data.msg,data.status=='1'?${assistantName}Back:null);
 		});
 	}
 	
-	if ($('.spinner')[0]) {
-		$('.spinner').each(function() {
-			var max = $(this).attr("data-spinner-max");
-			$(this).spinedit('setMaxmum', max ? max : 100);
-		});
+	$(".${assistantName}-container .save-btn").click(${assistantName}Save);
+	
+    if($('.select')[0]) {
+	    $('.select').selectpicker();
 	}
 </script>
