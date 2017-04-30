@@ -114,7 +114,7 @@ public class FamilyAssistant extends BaseAssistant {
 		Map<String, Object> model = new HashMap<String, Object>();
 
 		model.put("status", result > 0 ? 1 : 0);
-		model.put("msg", result > 0 ? "Ok,save succeed." : "Sorry,Save failed.");
+		model.put("msg", result > 0 ? "Ok,save succeed." : "Sorry,save failed.");
 		return responseJson(model);
 	}
 }
