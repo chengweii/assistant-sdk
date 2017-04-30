@@ -5,7 +5,7 @@
 		<div class="tile-config dropdown">
             <a data-toggle="dropdown" href="" class="tile-menu"></a>
             <ul class="dropdown-menu pull-right text-right">
-                <li><a href="liferecord/record.html">记录生活</a></li>
+                <li><a href="javascript:;" class="record-btn">记录生活</a></li>
             </ul>
         </div>
 		<div class="tile-body p-10">
@@ -35,6 +35,19 @@
 
 	<script>
 		assistant.keepAssistantContainerUnique('${assistantName}-container');
+		
+		function ${assistantName}Record(){
+			assistant.requestData({
+				assistantType:${assistantType},
+				isLocationPath:true,
+				requestContent : "recordLife",
+				extraInfo:{}
+			}, function(data) {
+				assistant.appendContainer(data,'${assistantName}-container');
+			});
+		}
+		
+		$(".${assistantName}-container .record-btn").click(${assistantName}Record);
 	
 		function ${assistantName}ItemClick(){
 			assistant.requestData({
