@@ -14,9 +14,9 @@
                     	<input type="hidden" class="record_id" value="${record.record_id}">
                         <div class="form-group">
                             <label>分类</label>
-                            <select class="select" class="type_name">
-                                <option>琐事</option>
-                                <option>待办</option>
+                            <select class="select" class="type_name" value="${record.type_name}">
+                                <option value="琐事">琐事</option>
+                                <option value="待办">待办</option>
                             </select>
                         </div>
 
@@ -91,6 +91,13 @@
 	$(".${assistantName}-container .save-btn").click(${assistantName}Save);
 	
     if($('.select')[0]) {
+    	$('.select').each(function(){
+    		var select=$(this);
+    		var value=select.attr("value");
+    		if(value!=""){
+    			select.find("option[value="+value+"]").attr("selected", "selected");
+    		}
+    	});
 	    $('.select').selectpicker();
 	}
 </script>
