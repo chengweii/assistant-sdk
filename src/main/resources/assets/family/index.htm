@@ -42,7 +42,7 @@
 				isLocationPath:true,
 				requestContent : "getRecordById",
 				extraInfo:{
-					redordId:$(this).attr("item-id")
+					recordId:$(this).attr("item-id")
 				}
 			}, function(data) {
 				assistant.appendContainer(data,'${assistantName}-container');
