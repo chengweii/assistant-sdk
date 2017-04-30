@@ -11,6 +11,7 @@
             <div class="col-md-12 col-xs-12">
                 <div class="p-15">
                     <form role="form">
+                    	<input type="hidden" class="record_id" value="${record.record_id}">
                         <div class="form-group">
                             <label>分类</label>
                             <select class="select" class="type_name">
@@ -75,6 +76,7 @@
 			isLocationPath:true,
 			requestContent : "saveRecord",
 			extraInfo:{
+				recordId:$(".${assistantName} .record_id").val(),
 				typeName:$(".${assistantName} .type_name").val(),
 				recordTime:$(".${assistantName} .record_time").val(),
 				recordTitle:$(".${assistantName} .record_title").val(),
