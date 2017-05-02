@@ -81,22 +81,21 @@
 		
 		if(!extraInfo.typeName||!extraInfo.recordTime||!extraInfo.recordTitle||!extraInfo.recordContent||!extraInfo.optimization){
 			assistant.modal.alert("Please input all element.",null);
-			return;
+		}else{
+			if($(".${assistantName}-container .record_id").val()){
+				extraInfo.recordId=$(".${assistantName}-container .record_id").val();
+			}
+			
+			assistant.requestData({
+				assistantType:${assistantType},
+				isLocationPath:true,
+				requestContent : "saveRecord",
+				extraInfo:extraInfo
+			}, function(data) {
+				data=$.parseJSON(data);
+				assistant.modal.alert(data.msg,data.status=='1'?${assistantName}Back:null);
+			});
 		}
-		
-		if($(".${assistantName}-container .record_id").val()){
-			extraInfo.recordId=$(".${assistantName}-container .record_id").val();
-		}
-		
-		assistant.requestData({
-			assistantType:${assistantType},
-			isLocationPath:true,
-			requestContent : "saveRecord",
-			extraInfo:extraInfo
-		}, function(data) {
-			data=$.parseJSON(data);
-			assistant.modal.alert(data.msg,data.status=='1'?${assistantName}Back:null);
-		});
 	}
 	
 	$(".${assistantName}-container .save-btn").click(${assistantName}Save);

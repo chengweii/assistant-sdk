@@ -21,10 +21,15 @@
                 <% for(item in recordList){ %>
                 <div class="media">
                     <div class="media-body ${assistantName}-item" item-id="${item.id}">
-                        <div class="block attrs" style="color: #d9534f;">${item.record_time}</div>
+                    	<%if(item.type_name=="琐事"){%>
+                    	<span class="label label-success">${item.type_name}</span>
+                    	<%}else{%>
+                    	<span class="label label-danger">${item.type_name}</span>
+                    	<%}%>
+                    	<font style="font-size: 25px;">${item.record_time}</font>
                         <font style="font-size: 18px;">${item.record_title}</font>
                         <div class="clearfix"></div>
-                        <small>${item.optimization}</small>
+                        <small>建议：${item.optimization}</small>
                     </div>
                 </div>
                 <%}%>
