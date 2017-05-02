@@ -6,15 +6,15 @@
 			<li><a href="javascript:;" class="back-btn">返 回</a></li>
 		</ul>
 	</div>
-	<div class="p-10">
+	<div class="tile-body p-10">
         <div class="row">
             <div class="col-md-12 col-xs-12">
                 <div class="p-15">
                     <form role="form">
-                    	<input type="hidden" class="record_id" value="${record.record_id}">
+                    	<input type="hidden" class="record_id" value="${record.id}">
                         <div class="form-group">
                             <label>分类</label>
-                            <select class="select" class="type_name" value="${record.type_name}">
+                            <select class="select type_name" value="${record.type_name}">
                                 <option value="琐事">琐事</option>
                                 <option value="待办">待办</option>
                             </select>
@@ -71,19 +71,30 @@
 	$(".${assistantName}-container .cancel-btn").click(${assistantName}Back);
 	
 	function ${assistantName}Save(){
+		var extraInfo={
+			typeName:$(".${assistantName}-container .type_name").val(),
+			recordTime:$(".${assistantName}-container .record_time").val(),
+			recordTitle:$(".${assistantName}-container .record_title").val(),
+			recordContent:$(".${assistantName}-container .record_content").val(),
+			optimization:$(".${assistantName}-container .optimization").val()
+		};
+		
+		if(!extraInfo.typeName||!extraInfo.recordTime||!extraInfo.recordTitle||!extraInfo.recordContent||!extraInfo.optimization){
+			assistant.modal.alert("Please input all element.",null);
+			return;
+		}
+		
+		if($(".${assistantName}-container .record_id").val()){
+			extraInfo.recordId=$(".${assistantName}-container .record_id").val();
+		}
+		
 		assistant.requestData({
 			assistantType:${assistantType},
 			isLocationPath:true,
 			requestContent : "saveRecord",
-			extraInfo:{
-				recordId:$(".${assistantName} .record_id").val(),
-				typeName:$(".${assistantName} .type_name").val(),
-				recordTime:$(".${assistantName} .record_time").val(),
-				recordTitle:$(".${assistantName} .record_title").val(),
-				recordContent:$(".${assistantName} .record_content").val(),
-				optimization:$(".${assistantName} .optimization").val()
-			}
+			extraInfo:extraInfo
 		}, function(data) {
+			data=$.parseJSON(data);
 			assistant.modal.alert(data.msg,data.status=='1'?${assistantName}Back:null);
 		});
 	}

@@ -27,8 +27,7 @@ public class FamilyAssistant extends BaseAssistant {
 		Response response = null;
 		try {
 			BaseRequest baseRequest = (BaseRequest) request;
-			if (baseRequest.isLocationPath() == null
-					|| baseRequest.isLocationPath() == false) {
+			if (baseRequest.isLocationPath() == null || baseRequest.isLocationPath() == false) {
 				response = getRecordListByWord((BaseRequest) request);
 			} else {
 				response = invokeLocationMethod((BaseRequest) request);
@@ -43,8 +42,10 @@ public class FamilyAssistant extends BaseAssistant {
 	public Response getRecordListByWord(BaseRequest request) {
 		String extraInfo = request.getExtraInfo();
 		Map<String, String> extraInfoMap = GsonUtil.getMapFromJson(extraInfo);
-		String word = extraInfoMap.get("word") != null ? extraInfoMap
-				.get("word") : "";
+		String word = "";
+		if (extraInfoMap != null && extraInfoMap.get("word") != null) {
+			word = extraInfoMap.get("word");
+		}
 		List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
 		if (!"".equals(word))
 			result = familyDao.findRecordListByWord(word);
@@ -59,8 +60,7 @@ public class FamilyAssistant extends BaseAssistant {
 	public Response getRecordById(BaseRequest request) {
 		String extraInfo = request.getExtraInfo();
 		Map<String, String> extraInfoMap = GsonUtil.getMapFromJson(extraInfo);
-		Integer recordId = extraInfoMap.get("recordId") != null ? Integer
-				.valueOf(extraInfoMap.get("recordId")) : 0;
+		Integer recordId = extraInfoMap.get("recordId") != null ? Integer.valueOf(extraInfoMap.get("recordId")) : 0;
 		Map<String, Object> result = familyDao.findRecordById(recordId);
 
 		Map<String, Object> model = new HashMap<String, Object>();
@@ -89,26 +89,22 @@ public class FamilyAssistant extends BaseAssistant {
 	public Response saveRecord(BaseRequest request) {
 		String extraInfo = request.getExtraInfo();
 		Map<String, String> extraInfoMap = GsonUtil.getMapFromJson(extraInfo);
-		String typeName = extraInfoMap.get("typeName") != null ? String
-				.valueOf(extraInfoMap.get("typeName")) : "";
-		String recordTime = extraInfoMap.get("recordTime") != null ? String
-				.valueOf(extraInfoMap.get("recordTime")) : "";
-		String recordTitle = extraInfoMap.get("recordTitle") != null ? String
-				.valueOf(extraInfoMap.get("recordTitle")) : "";
-		String recordContent = extraInfoMap.get("recordContent") != null ? String
-				.valueOf(extraInfoMap.get("recordContent")) : "";
-		String optimization = extraInfoMap.get("optimization") != null ? String
-				.valueOf(extraInfoMap.get("optimization")) : "";
-		int recordId = extraInfoMap.get("recordId") != null ? Integer
-				.valueOf(extraInfoMap.get("recordId")) : 0;
+		String typeName = extraInfoMap.get("typeName") != null ? String.valueOf(extraInfoMap.get("typeName")) : "";
+		String recordTime = extraInfoMap.get("recordTime") != null ? String.valueOf(extraInfoMap.get("recordTime"))
+				: "";
+		String recordTitle = extraInfoMap.get("recordTitle") != null ? String.valueOf(extraInfoMap.get("recordTitle"))
+				: "";
+		String recordContent = extraInfoMap.get("recordContent") != null
+				? String.valueOf(extraInfoMap.get("recordContent")) : "";
+		String optimization = extraInfoMap.get("optimization") != null
+				? String.valueOf(extraInfoMap.get("optimization")) : "";
+		int recordId = extraInfoMap.get("recordId") != null ? Integer.valueOf(extraInfoMap.get("recordId")) : 0;
 
 		int result = 0;
 		if (recordId == 0) {
-			result = familyDao.modifyRecord(typeName, recordTime, recordTitle,
-					recordContent, optimization);
+			result = familyDao.modifyRecord(typeName, recordTitle, recordContent, recordTime, optimization);
 		} else {
-			result = familyDao.modifyRecord(typeName, recordTime, recordTitle,
-					recordContent, optimization, recordId);
+			result = familyDao.modifyRecord(typeName, recordTitle, recordContent, recordTime, optimization, recordId);
 		}
 
 		Map<String, Object> model = new HashMap<String, Object>();

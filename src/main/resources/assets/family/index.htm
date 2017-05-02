@@ -71,7 +71,7 @@
 				isLocationPath:true,
 				requestContent : "getRecordListByWord",
 				extraInfo:{
-					word:word?word:"";
+					word:word?word:""
 				}
 			}, function(data) {
 				assistant.appendContainer($(data).html(),'${assistantName}-container');
