@@ -1,0 +1,50 @@
+<div class="col-md-4 ${assistantName}-container" animate="true">
+
+	<div class="tile">
+		<h2 class="tile-title">${assistantTitle}</h2>
+		<div class="tile-body p-10">
+			<div class="listview narrow">
+				<% for(item in goalList){ %>
+				<div class="media ${assistantName}-item" goal-name="${item.goal_name}">
+					<div class="pull-right">
+                         <div class="counts">${item.progress_cost_hours}/${item.goal_cost_hours} h</div>
+                    </div>
+                    <div class="media-body">
+                        <h6>${item.goal_name}</h6>
+                        <div class="progress progress-small">
+                            <a href="javascript:;" data-toggle="tooltip" title="${item.goal_progress}%" class="progress-bar tooltips progress-bar-danger" style="width: ${item.goal_progress}%;" data-original-title="${item.goal_progress}%"></a>
+                        </div>
+                    </div>
+				</div>
+				<%}%>
+			</div>
+		</div>
+		<div class="clearfix"></div>
+	</div>
+
+	<style>
+		.${assistantName}-item {
+			cursor: pointer;
+		}
+	</style>
+
+	<script>
+		assistant.keepAssistantContainerUnique('${assistantName}-container');
+	
+		function ${assistantName}ItemClick(){
+			assistant.requestData({
+				assistantType:${assistantType},
+				isLocationPath:true,
+				requestContent : "getStageListByGoalName",
+				extraInfo:{
+					goalName:$(this).attr("goal-name")
+				}
+			}, function(data) {
+				assistant.appendContainer(data,'${assistantName}-container');
+			});
+		}
+		
+		$(".${assistantName}-item").click(${assistantName}ItemClick);
+	</script>
+
+</div>

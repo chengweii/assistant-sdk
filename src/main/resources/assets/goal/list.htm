@@ -1,0 +1,62 @@
+
+<div class="tile">
+	<h2 class="tile-title">${assistantTitle}</h2>
+	<div class="tile-config dropdown">
+		<a data-toggle="dropdown" href="" class="tile-menu"></a>
+		<ul class="dropdown-menu pull-right text-right">
+			<li><a href="javascript:;" class="${assistantName}-back-btn">返
+					回</a></li>
+		</ul>
+	</div>
+	<div class="tile-body p-10">
+		<div class="listview narrow">
+			<% for(item in stageList){ %>
+			<div class="media ${assistantName}-item" item-id="${item.id}">
+				<div class="pull-right">
+                        <div class="counts">${item.progress_cost_hours}/${item.stage_cost_hours} h</div>
+                   </div>
+                   <div class="media-body">
+                       <h6>${item.stage_name}</h6>
+                       <div class="progress progress-small">
+                           <a href="javascript:;" data-toggle="tooltip" title="${item.progress}%" class="progress-bar tooltips progress-bar-danger" style="width: ${item.progress}%;" data-original-title="${item.progress}%"></a>
+                       </div>
+                   </div>
+			</div>
+			<%}%>
+		</div>
+	</div>
+	<div class="clearfix"></div>
+</div>
+
+<style>
+	.${assistantName}-item {
+		cursor: pointer;
+	}
+</style>
+
+<script>
+	function ${assistantName}ItemClick(){
+		assistant.requestData({
+			assistantType:${assistantType},
+			isLocationPath:true,
+			requestContent : "getStageById",
+			extraInfo:{
+				stageId:$(this).attr("item-id")
+			}
+		}, function(data) {
+			assistant.appendContainer(data,'${assistantName}-container');
+		});
+	}
+	
+	$(".${assistantName}-back-btn").click(function(){
+		assistant.requestData({
+			assistantType:${assistantType},
+			isLocationPath:true,
+			requestContent : "getGoalList"
+		}, function(data) {
+			assistant.appendContainer($(data).html(),'${assistantName}-container');
+		});
+	});
+	
+	$(".${assistantName}-item").click(${assistantName}ItemClick);
+</script>

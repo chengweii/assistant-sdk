@@ -1,0 +1,113 @@
+<div class="tile">
+	<h2 class="tile-title">${assistantTitle}</h2>
+	<div class="tile-config dropdown">
+		<a data-toggle="dropdown" href="" class="tile-menu"></a>
+		<ul class="dropdown-menu pull-right text-right">
+			<li><a href="javascript:;" class="back-btn">返 回</a></li>
+		</ul>
+	</div>
+	<div class="tile-body p-10">
+        <div class="row">
+            <div class="col-md-12 col-xs-12">
+                <div class="p-15">
+                    <form role="form">
+                    	<input type="hidden" class="record_id" value="${record.id}">
+                        <div class="form-group">
+                            <label>分类</label>
+                            <select class="select type_name" value="${record.type_name}">
+                                <option value="琐事">琐事</option>
+                                <option value="待办">待办</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>时间</label>
+                            <input type="time" class="form-control input-sm record_time" placeholder="时间" value="${record.record_time}">
+                        </div>
+
+                        <div class="form-group">
+                            <label>记录概要</label>
+                            <input type="text" class="form-control input-sm record_title" placeholder="..." value="${record.record_title}">
+                        </div>
+
+                        <div class="form-group">
+                            <label>记录详细</label>
+                            <textarea class="form-control auto-size input-sm record_content" placeholder="..." style="overflow: hidden; word-wrap: break-word; resize: none; height: 48px;">${record.record_content}</textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label>优化建议</label>
+                            <textarea class="form-control auto-size input-sm optimization" placeholder="..." style="overflow: hidden; word-wrap: break-word; resize: none; height: 48px;">${record.optimization}</textarea>
+                        </div>
+
+                        <button type="button" class="btn btn-sm m-t-10 save-btn">Save</button>
+                        <button type="button" class="btn btn-sm m-t-10 cancel-btn">Cancel</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+	<div class="clearfix"></div>
+</div>
+
+<style>
+</style>
+
+<script>
+	function ${assistantName}Back(){
+		assistant.requestData({
+			assistantType:${assistantType},
+			isLocationPath:true,
+			requestContent : "getRecordListByWord",
+			extraInfo:{
+				word:""
+			}
+		}, function(data) {
+			assistant.appendContainer($(data).html(),'${assistantName}-container');
+		});
+	}
+
+	$(".${assistantName}-container .back-btn").click(${assistantName}Back);
+	$(".${assistantName}-container .cancel-btn").click(${assistantName}Back);
+	
+	function ${assistantName}Save(){
+		var extraInfo={
+			typeName:$(".${assistantName}-container .type_name").val(),
+			recordTime:$(".${assistantName}-container .record_time").val(),
+			recordTitle:$(".${assistantName}-container .record_title").val(),
+			recordContent:$(".${assistantName}-container .record_content").val(),
+			optimization:$(".${assistantName}-container .optimization").val()
+		};
+		
+		if(!extraInfo.typeName||!extraInfo.recordTime||!extraInfo.recordTitle||!extraInfo.recordContent||!extraInfo.optimization){
+			assistant.modal.alert("Please input all element.",null);
+		}else{
+			if($(".${assistantName}-container .record_id").val()){
+				extraInfo.recordId=$(".${assistantName}-container .record_id").val();
+			}
+			
+			assistant.requestData({
+				assistantType:${assistantType},
+				isLocationPath:true,
+				requestContent : "saveRecord",
+				extraInfo:extraInfo
+			}, function(data) {
+				data=$.parseJSON(data);
+				assistant.modal.alert(data.msg,data.status=='1'?${assistantName}Back:null);
+			});
+		}
+	}
+	
+	$(".${assistantName}-container .save-btn").click(${assistantName}Save);
+	
+    if($('.select')[0]) {
+    	$('.select').each(function(){
+    		var select=$(this);
+    		var value=select.attr("value");
+    		if(value!=""){
+    			select.find("option[value="+value+"]").attr("selected", "selected");
+    		}
+    	});
+	    $('.select').selectpicker();
+	}
+</script>

@@ -1,0 +1,89 @@
+<div class="col-md-4 ${assistantName}-container" animate="true">
+
+	<div class="tile">
+		<h2 class="tile-title">${assistantTitle}</h2>
+		<div class="tile-config dropdown">
+            <a data-toggle="dropdown" href="" class="tile-menu"></a>
+            <ul class="dropdown-menu pull-right text-right">
+                <li><a href="javascript:;" class="record-btn">记录生活</a></li>
+            </ul>
+        </div>
+		<div class="tile-body p-10">
+			<div class="listview narrow">
+				<header class="listview-header media">
+                    <div class="col-md-8 col-xs-8">
+                        <input class="input-sm pull-right form-control idea-word" type="text" placeholder="Your ideas....">
+                    </div>
+                    <div class="col-md-4 col-xs-4">
+                        <button type="submit" class="btn btn-sm ding">Ding</button>
+                    </div>
+                </header>
+                <% for(item in recordList){ %>
+                <div class="media">
+                    <div class="media-body ${assistantName}-item" item-id="${item.id}">
+                    	<%if(item.type_name=="琐事"){%>
+                    	<span class="label label-success">${item.type_name}</span>
+                    	<%}else{%>
+                    	<span class="label label-danger">${item.type_name}</span>
+                    	<%}%>
+                    	<font style="font-size: 25px;">${item.record_time}</font>
+                        <font style="font-size: 18px;">${item.record_title}</font>
+                        <div class="clearfix"></div>
+                        <small>建议：${item.optimization}</small>
+                    </div>
+                </div>
+                <%}%>
+			</div>
+		</div>
+		<div class="clearfix"></div>
+	</div>
+
+	<script>
+		assistant.keepAssistantContainerUnique('${assistantName}-container');
+		
+		function ${assistantName}Record(){
+			assistant.requestData({
+				assistantType:${assistantType},
+				isLocationPath:true,
+				requestContent : "recordLife",
+				extraInfo:{}
+			}, function(data) {
+				assistant.appendContainer(data,'${assistantName}-container');
+			});
+		}
+		
+		$(".${assistantName}-container .record-btn").click(${assistantName}Record);
+	
+		function ${assistantName}ItemClick(){
+			assistant.requestData({
+				assistantType:${assistantType},
+				isLocationPath:true,
+				requestContent : "getRecordById",
+				extraInfo:{
+					recordId:$(this).attr("item-id")
+				}
+			}, function(data) {
+				assistant.appendContainer(data,'${assistantName}-container');
+			});
+		}
+		
+		$(".${assistantName}-item").click(${assistantName}ItemClick);
+		
+		function ${assistantName}Ding(){
+			var word=$(".${assistantName}-container .idea-word").val();
+			assistant.requestData({
+				assistantType:${assistantType},
+				isLocationPath:true,
+				requestContent : "getRecordListByWord",
+				extraInfo:{
+					word:word?word:""
+				}
+			}, function(data) {
+				assistant.appendContainer($(data).html(),'${assistantName}-container');
+			});
+		}
+		
+		$(".${assistantName}-container .ding").click(${assistantName}Ding);
+	</script>
+
+</div>

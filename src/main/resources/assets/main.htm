@@ -1,0 +1,26 @@
+<div class="col-md-12 ${assistantName}-container" animate="true">
+<div class="tile">
+	<div class="tile-body p-10" style="max-height:10pc;overflow:auto;">
+		<div>
+			<h3>${welcomeMsg}</h3>
+		</div>
+		<div id="goal-list-key" class="listview narrow">
+			<% for(item in assistantList){ %>
+			<div class="media">
+				<div class="pull-right">
+					<div class="counts">
+					<% for(word in item.related_word_list){ %>
+					${word.associated_word}
+					<%}%>
+					</div>
+				</div>
+				<div class="media-body">
+					<h6>${item.assistant_name}</h6>
+				</div>
+			</div>
+			<%}%>
+		</div>
+	</div>
+	<div class="clearfix"></div>
+</div>
+</div>

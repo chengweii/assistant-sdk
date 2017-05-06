@@ -13,9 +13,13 @@ public class BaseRequest implements Request {
 
 	private AssistantType assistantType;
 
-	private String function;
+	private Boolean isLocationPath;
 
 	private String requestContent;
+
+	private String extraInfo;
+
+	private String originRequest;
 
 	public BaseRequest(String request) {
 		deserializeRequest(request);
@@ -27,28 +31,51 @@ public class BaseRequest implements Request {
 		if (requestData != null) {
 			this.assistantType = AssistantType.fromCode(requestData.assistantType);
 			this.originType = OriginType.fromCode(requestData.originType);
-			this.function = requestData.function;
+			this.isLocationPath = requestData.isLocationPath;
 			this.requestContent = requestData.requestContent;
+			this.extraInfo = GsonUtil.toJson(requestData.extraInfo);
+			this.originRequest = request;
 		}
 	}
 
 	public static class RequestData {
 		public String assistantType;
 		public String originType;
-		public String function;
+		public Boolean isLocationPath;
 		public String requestContent;
+		public Object extraInfo;
 	}
 
 	public AssistantType getAssistantType() {
 		return this.assistantType;
 	}
 
+	public void getAssistantType(AssistantType assistantType) {
+		this.assistantType = assistantType;
+	}
+
 	public OriginType getOriginType() {
 		return this.originType;
 	}
 
-	public String getFunction() {
-		return this.function;
+	public void setOriginType(OriginType originType) {
+		this.originType = originType;
+	}
+
+	public String getExtraInfo() {
+		return this.extraInfo;
+	}
+
+	public void setExtraInfo(String extraInfo) {
+		this.extraInfo = extraInfo;
+	}
+
+	public Boolean isLocationPath() {
+		return this.isLocationPath;
+	}
+
+	public String getOriginRequest() {
+		return this.originRequest;
 	}
 
 	@Override

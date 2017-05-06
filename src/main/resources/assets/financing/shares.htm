@@ -1,0 +1,55 @@
+<div class="col-md-4 ${assistantName}-container" animate="true">
+
+	<div class="tile index">
+		<h2 class="tile-title">${assistantTitle}</h2>
+		<div class="tile-body p-10">
+			<div class="listview narrow ${assistantName}-list">
+				<% for(item in sharesList){ %>
+				<div class="media ${assistantName}-item" item-id="${item.id}">
+					<textarea class="item-config">${item.alarm_config}</textarea>
+					<div class="pull-right">
+						<div class="counts">${item.share_name}</div>
+					</div>
+					<div class="media-body">
+						<div class="form-group pull-left">
+							<div class="col-md-3 "><input type="text" class="form-control input-sm riseQuotPrice"  placeholder="高位"/></div>
+							<div class="col-md-3"><input type="text" class="form-control input-sm downQuotPrice"  placeholder="低位"/></div>
+							<div class="col-md-3"><input type="text" class="form-control input-sm riseQuotMovement"  placeholder="涨幅"/></div>
+							<div class="col-md-3"><input type="text" class="form-control input-sm downQuotMovement"  placeholder="跌幅"/></div>
+						</div>
+					</div>
+				</div>
+				<%}%>
+			</div>
+		</div>
+		<div class="clearfix"></div>
+	</div>
+
+	<style>
+		.${assistantName}-item {
+			cursor: pointer;
+		}
+		.${assistantName}-item .col-md-3{
+			padding-left: 2px;
+			padding-right: 2px;
+		}
+		.${assistantName}-item .item-config{
+			display:none;
+		}
+</style>
+
+	<script>
+		assistant.keepAssistantContainerUnique('${assistantName}-container');
+		$(document).ready(function(){
+			$(".${assistantName}-item").each(function(){
+				var item=$(this);
+				var alarmConfig=$.parseJSON(item.find(".item-config").text());
+				item.find(".riseQuotPrice").val(alarmConfig.riseQuotPrice);
+				item.find(".downQuotPrice").val(alarmConfig.downQuotPrice);
+				item.find(".riseQuotMovement").val(alarmConfig.riseQuotMovement);
+				item.find(".downQuotMovement").val(alarmConfig.downQuotMovement);
+			});
+		});
+	</script>
+
+</div>
