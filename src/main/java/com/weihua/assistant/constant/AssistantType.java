@@ -14,6 +14,7 @@ import com.weihua.assistant.service.ScheduleAssistant;
 import com.weihua.assistant.service.TravelAssistant;
 import com.weihua.assistant.service.WeatherAssistant;
 import com.weihua.assistant.service.WorkAssistant;
+import com.weihua.assistant.service.KnowledgeBaseAssistant;
 
 public enum AssistantType {
 
@@ -30,7 +31,8 @@ public enum AssistantType {
 	HEALTHY_ASSISTANT("121", HealthyAssistant.class.getName()),
 	DIET_ASSISTANT("122", DietAssistant.class.getName()),
 	SCHEDULE_ASSISTANT("123", ScheduleAssistant.class.getName()),
-	WORK_ASSISTANT("124", WorkAssistant.class.getName());
+	WORK_ASSISTANT("124", WorkAssistant.class.getName()),
+	KNOWLEDGEBASE_ASSISTANT("125", KnowledgeBaseAssistant.class.getName());
 
 	private AssistantType(String code, String value) {
 		this.code = code;
