@@ -33,5 +33,12 @@ public class FamilyDaoImpl extends BaseDao implements FamilyDao {
 		}
 		return dBHelper.queryUpdate(LOGGER, sql, params);
 	}
+	
+	@Override
+	public List<Map<String, Object>> findRecordListByTime(String timeBegin,String timeEnd) {
+		String sql = "select * from life_record where record_time >= ? and record_time <= ?";
+		List<Map<String, Object>> result = dBHelper.queryMapList(LOGGER, sql,timeBegin,timeEnd);
+		return result;
+	}
 
 }

@@ -1,18 +1,23 @@
 package com.weihua.assistant.service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
 
+import com.weihua.assistant.context.Context;
+import com.weihua.assistant.context.Context.HistoryRecord;
+import com.weihua.assistant.entity.alarm.AlarmInfo;
 import com.weihua.assistant.entity.request.BaseRequest;
 import com.weihua.assistant.entity.request.Request;
 import com.weihua.assistant.entity.response.Response;
 import com.weihua.assistant.service.annotation.ServiceLocation;
 import com.weihua.database.dao.FamilyDao;
 import com.weihua.database.dao.impl.FamilyDaoImpl;
+import com.weihua.util.DateUtil;
 import com.weihua.util.ExceptionUtil;
 import com.weihua.util.GsonUtil;
 
@@ -112,5 +117,22 @@ public class FamilyAssistant extends BaseAssistant {
 		model.put("status", result > 0 ? 1 : 0);
 		model.put("msg", result > 0 ? "Ok,save succeed." : "Sorry,save failed.");
 		return responseJson(model);
+	}
+	
+	@ServiceLocation(value = "getTriflesByTime")
+	public Response getTriflesByTime(BaseRequest request) {
+		HistoryRecord lastHistoryRecord = Context.findLastBackAssistantHistory(request.getAssistantType(),
+				request.getOriginRequest());
+		Map<String, String> timeConfig = GsonUtil.getMapFromJson(request.getExtraInfo());
+		
+		String[] timeList=timeConfig.get("rate").split(",");
+		
+		if(timeList!=null&&timeList.length>0){
+			String currentTime=DateUtil.getDateFormat(new Date(), "");
+			for(String time:timeList){
+			}
+		}
+		
+		return null;
 	}
 }

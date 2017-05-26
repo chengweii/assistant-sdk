@@ -9,4 +9,6 @@ public interface FamilyDao {
 	Map<String, Object> findRecordById(Integer id);
 
 	int modifyRecord(Object... params);
+
+	List<Map<String, Object>> findRecordListByTime(String timeBegin, String timeEnd);
 }

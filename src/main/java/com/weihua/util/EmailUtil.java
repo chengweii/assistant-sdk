@@ -10,7 +10,7 @@ import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
-public class SendmailUtil {
+public class EmailUtil {
 
 	private static Properties props = System.getProperties();
 
@@ -18,7 +18,7 @@ public class SendmailUtil {
 		props.put("mail.smtp.auth", "true");
 	}
 
-	private SendmailUtil() {
+	private EmailUtil() {
 	}
 
 	public static boolean sendEmail(SendEmailInfo sendEmailInfo) {
@@ -151,11 +151,11 @@ public class SendmailUtil {
 		info.setSendPwd("343434");
 		info.setReceiveUser("34343434@qq.com");
 
-		SendmailUtil.sendEmail(info);
+		EmailUtil.sendEmail(info);
 		
 		info.setHeadName("您上午的對對對有202件，挺累的，加油吧！");
 		info.setSendHtml("水電費水電費内容");
 		
-		SendmailUtil.sendEmail(info);
+		EmailUtil.sendEmail(info);
 	}
 }
