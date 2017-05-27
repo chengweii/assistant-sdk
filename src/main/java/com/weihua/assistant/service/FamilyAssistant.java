@@ -8,6 +8,7 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 
+import com.weihua.assistant.constant.OriginType;
 import com.weihua.assistant.context.Context;
 import com.weihua.assistant.context.Context.HistoryRecord;
 import com.weihua.assistant.entity.request.BaseRequest;
@@ -126,6 +127,9 @@ public class FamilyAssistant extends BaseAssistant {
 
 	@ServiceLocation(value = "getTriflesByTime")
 	public Response getTriflesByTime(BaseRequest request) {
+		if (request.getOriginType() != OriginType.WEB)
+			return null;
+
 		Map<String, String> timeConfig = GsonUtil.getMapFromJson(request.getExtraInfo());
 
 		String morningRemindTime = timeConfig.get("morningRemindTime");
