@@ -93,7 +93,9 @@ public class MainAssistant extends BaseAssistant {
 				baseRequest.setExtraInfo(item.get("time_config").toString());
 				response = assistant.getResponse(baseRequest);
 				if (response != null) {
-					msgList.add(response.getContent());
+					if (response.getContent() != null) {
+						msgList.add(response.getContent());
+					}
 					Context.recordHistory(baseRequest.getAssistantType(), ServiceType.BACK_SERVICE, baseRequest,
 							(BaseResponse) response);
 				}

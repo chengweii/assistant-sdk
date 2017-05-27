@@ -14,14 +14,33 @@ public class EmailUtil {
 
 	private static Properties props = System.getProperties();
 
+	private static String defaultKeySmtp = "mail.smtp.host";
+	private static String defaultValueSmtp = "smtp.163.com";
+
+	private static String defaultSendUser;
+	private static String defaultSendUname;
+	private static String defaultSendPwd;
+
+	private static String defaultSendNickName = "我的助手";
+
+	private static String defaultReceiveUser;
+
 	static {
 		props.put("mail.smtp.auth", "true");
+	}
+
+	public static void init(String sendUser, String sendPwd, String receiveUser) {
+		defaultSendUser = sendUser;
+		if (sendUser != null && sendUser.contains("@"))
+			defaultSendUname = sendUser.substring(0, sendUser.indexOf("@"));
+		defaultSendPwd = sendPwd;
+		defaultReceiveUser = receiveUser;
 	}
 
 	private EmailUtil() {
 	}
 
-	public static boolean sendEmail(SendEmailInfo sendEmailInfo) {
+	public static boolean sendEmail(final SendEmailInfo sendEmailInfo) {
 		try {
 			props.setProperty(sendEmailInfo.getKeySmtp(), sendEmailInfo.getValueSmtp());
 
@@ -30,7 +49,7 @@ public class EmailUtil {
 					return new PasswordAuthentication(sendEmailInfo.getSendUname(), sendEmailInfo.getSendPwd());
 				}
 			});
-			session.setDebug(true);
+			//session.setDebug(true);
 			MimeMessage message = new MimeMessage(session);
 
 			String nickName = javax.mail.internet.MimeUtility.encodeText(sendEmailInfo.getSendNickName());
@@ -55,8 +74,8 @@ public class EmailUtil {
 
 	public static class SendEmailInfo {
 
-		private String keySmtp = "mail.smtp.host";
-		private String valueSmtp = "smtp.163.com";
+		private String keySmtp;
+		private String valueSmtp;
 
 		private String sendUser;
 		private String sendUname;
@@ -69,7 +88,7 @@ public class EmailUtil {
 		private String sendHtml;
 
 		public String getKeySmtp() {
-			return keySmtp;
+			return keySmtp == null ? defaultKeySmtp : keySmtp;
 		}
 
 		public void setKeySmtp(String keySmtp) {
@@ -77,7 +96,7 @@ public class EmailUtil {
 		}
 
 		public String getValueSmtp() {
-			return valueSmtp;
+			return valueSmtp == null ? defaultValueSmtp : valueSmtp;
 		}
 
 		public void setValueSmtp(String valueSmtp) {
@@ -85,7 +104,7 @@ public class EmailUtil {
 		}
 
 		public String getSendUser() {
-			return sendUser;
+			return sendUser == null ? defaultSendUser : sendUser;
 		}
 
 		public void setSendUser(String sendUser) {
@@ -93,7 +112,7 @@ public class EmailUtil {
 		}
 
 		public String getSendUname() {
-			return sendUname;
+			return sendUname == null ? defaultSendUname : sendUname;
 		}
 
 		public void setSendUname(String sendUname) {
@@ -101,7 +120,7 @@ public class EmailUtil {
 		}
 
 		public String getSendPwd() {
-			return sendPwd;
+			return sendPwd == null ? defaultSendPwd : sendPwd;
 		}
 
 		public void setSendPwd(String sendPwd) {
@@ -109,7 +128,7 @@ public class EmailUtil {
 		}
 
 		public String getSendNickName() {
-			return sendNickName;
+			return sendNickName == null ? defaultSendNickName : sendNickName;
 		}
 
 		public void setSendNickName(String sendNickName) {
@@ -117,7 +136,7 @@ public class EmailUtil {
 		}
 
 		public String getReceiveUser() {
-			return receiveUser;
+			return receiveUser == null ? defaultReceiveUser : receiveUser;
 		}
 
 		public void setReceiveUser(String receiveUser) {
@@ -152,10 +171,10 @@ public class EmailUtil {
 		info.setReceiveUser("34343434@qq.com");
 
 		EmailUtil.sendEmail(info);
-		
+
 		info.setHeadName("您上午的對對對有202件，挺累的，加油吧！");
 		info.setSendHtml("水電費水電費内容");
-		
+
 		EmailUtil.sendEmail(info);
 	}
 }

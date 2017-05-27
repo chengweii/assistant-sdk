@@ -1,0 +1,205 @@
+<html>
+
+<head></head>
+
+<body>
+    <table align="center" border="0" cellpadding="0" cellspacing="0">
+        <tbody>
+            <tr>
+                <td align="center" width="600">
+                    <!--header-->
+
+                    <table class="table-inner" width="95%" border="0" align="center" cellpadding="0" cellspacing="0">
+                        <tbody>
+                            <tr>
+                                <td data-bgcolor="header bar" bgcolor="#ff646a" style="border-top-left-radius:6px; border-top-right-radius:6px;text-align:center;vertical-align:top;font-size:0;"
+                                    align="center">
+                                    <table width="90%" border="0" align="center" cellpadding="0" cellspacing="0">
+                                        <tbody>
+                                            <tr>
+                                                <td height="20">
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td data-color="headline" data-size="headline" align="center" style="font-family: 'Open sans', Arial, sans-serif;color:#FFFFFF;font-size: 12px;font-weight: bold;">
+                                                    <singleline>
+                                                        ${title}
+                                                    </singleline>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td height="20">
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <!--end header-->
+
+                    <table class="table-inner" width="95%" border="0" cellspacing="0" cellpadding="0">
+                        <tbody>
+                            <tr>
+                                <td data-bgcolor="container" bgcolor="#FFFFFF" align="center" style="text-align:center;vertical-align:top;font-size:0;">
+                                    <table align="center" width="90%" border="0" cellspacing="0" cellpadding="0">
+                                        <tbody>
+                                            <tr>
+                                                <td height="15">
+                                                </td>
+                                            </tr>
+
+                                            <!--image-->
+
+                                            <tr>
+                                                <td align="center" style="line-height: 0px;">
+                                                    <img data-crop="false" style="display:block; line-height:0px; font-size:0px; border:0px;border-radius:4px;" class="img1" src="https://raw.githubusercontent.com/chengweii/resource/master/img/${bannerImage}"
+                                                        alt="img" width="100%" height="auto">
+                                                </td>
+                                            </tr>
+                                            <!--end image-->
+
+                                            <tr>
+                                                <td height="15">
+                                                </td>
+                                            </tr>
+
+                                            <!--item-->
+                                            <% for(item in recordList){ %>
+                                            <tr>
+                                                <td data-link-style="text-decoration:none; color:#414a51;" data-link-color="Headline Link" data-color="Headline" data-size="Headline"
+                                                    align="left" style="font-family: 'Open Sans', Arial, sans-serif; font-size: 22px;color:#414a51;font-weight: bold;">
+                                                    <a href="#" style="text-decoration:none;color:#ffffff;background:<%if(item.type_name=="琐事"){%>#31af64<%}else{%>#ff646a<%}%>;border-radius:4px;padding:3px;font-size: 15px;line-height: 26px;"
+                                                        data-color="Button Link">${item.record_time}</a>
+                                                    <singleline style="font-size: 15px;">
+                                                        	${item.record_title}
+                                                    </singleline>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td height="5">
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td data-link-style="text-decoration:none; color:#ff646a;" data-link-color="Content Link" data-color="Content" data-size="Content"
+                                                    align="left" style="font-family: 'Open sans', Arial, sans-serif;color:#7f8c8d;font-size: 12px;line-height: 20px;"
+                                                    class="editable">
+                                                    <multiline>
+                                                        ${item.optimization}
+                                                    </multiline>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td height="5">
+                                                </td>
+                                            </tr>
+                                            <!--end item-->
+                                            <%}%>
+
+                                            <tr>
+                                                <td height="20">
+                                                </td>
+                                            </tr>
+                                            <!--detail-->
+
+                                            <tr>
+                                                <td data-color="detail" data-size="detail" align="center" style="font-family: 'Open sans', Arial, sans-serif; color:#a7aeb3; font-size:11px; line-height: auto;font-style: italic;">
+                                                    <singleline>
+                                                      ${lifeMoto}
+                                                    </singleline>
+                                                </td>
+                                            </tr>
+                                            <!--end detail-->
+
+                                            <tr>
+                                                <td height="40">
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td data-bgcolor="preference bg" height="45" align="center" bgcolor="#f4f4f4" style="border-bottom-left-radius:6px;border-bottom-right-radius:6px;">
+                                    <table align="center" width="90%" border="0" cellspacing="0" cellpadding="0">
+                                        <tbody>
+                                            <tr>
+                                                <td height="10">
+                                                </td>
+                                            </tr>
+                                            <!--preference-->
+
+                                            <tr>
+                                                <td data-link-style="text-decoration:none; color:#ff646a;" data-link-color="Preference Link" data-color="Preference" data-size="Preference"
+                                                    class="preference-link" align="center" style="font-family: 'Open sans', Arial, sans-serif; color:#95a5a6; font-size:12px;font-style: italic;">
+                                                    Technical services are provided by 
+                                                    <webversion>
+                                                        WeiHua
+                                                    </webversion>
+                                                    <unsubscribe>
+                                                        infomation
+                                                    </unsubscribe>
+                                                </td>
+                                            </tr>
+                                            <!--end preference-->
+
+                                            <tr>
+                                                <td height="10">
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table align="center" border="0" cellspacing="0" cellpadding="0">
+                        <tbody>
+                            <tr>
+                                <td height="20">
+                                </td>
+                            </tr>
+                            <!--social-->
+
+                            <tr>
+                                <td align="center" style="text-align:center;vertical-align:top;font-size:0;">
+                                    <table width="120" border="0" align="center" cellpadding="0" cellspacing="0">
+                                        <tbody>
+                                            <tr>
+                                                <td align="center" style="line-height: 0px;">
+                                                    <a href="#"></a>
+                                                </td>
+                                                <td width="10">
+                                                </td>
+                                                <td align="center" style="line-height: 0px;">
+                                                    <a href="#"></a>
+                                                </td>
+                                                <td width="10">
+                                                </td>
+                                                <td align="center" style="line-height: 0px;">
+                                                    <a href="#"></a>
+                                                </td>
+                                                <td width="10">
+                                                </td>
+                                                <td align="center" style="line-height: 0px;">
+                                                    <a href="#"></a>
+                                                </td>
+                                            </tr>
+                                            <!--end social-->
+
+                                        </tbody>
+                                    </table>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+
+</body>
+
+</html>

@@ -10,14 +10,17 @@ import org.apache.log4j.Logger;
 
 import com.weihua.assistant.context.Context;
 import com.weihua.assistant.context.Context.HistoryRecord;
-import com.weihua.assistant.entity.alarm.AlarmInfo;
 import com.weihua.assistant.entity.request.BaseRequest;
 import com.weihua.assistant.entity.request.Request;
 import com.weihua.assistant.entity.response.Response;
 import com.weihua.assistant.service.annotation.ServiceLocation;
 import com.weihua.database.dao.FamilyDao;
+import com.weihua.database.dao.LifeMotoDao;
 import com.weihua.database.dao.impl.FamilyDaoImpl;
+import com.weihua.database.dao.impl.LifeMotoDaoImpl;
 import com.weihua.util.DateUtil;
+import com.weihua.util.EmailUtil;
+import com.weihua.util.EmailUtil.SendEmailInfo;
 import com.weihua.util.ExceptionUtil;
 import com.weihua.util.GsonUtil;
 
@@ -26,6 +29,8 @@ public class FamilyAssistant extends BaseAssistant {
 	private static Logger LOGGER = Logger.getLogger(FamilyAssistant.class);
 
 	private static FamilyDao familyDao = new FamilyDaoImpl();
+
+	private static LifeMotoDao lifeMotoDao = new LifeMotoDaoImpl();
 
 	@Override
 	public Response getResponse(Request request) {
@@ -118,21 +123,54 @@ public class FamilyAssistant extends BaseAssistant {
 		model.put("msg", result > 0 ? "Ok,save succeed." : "Sorry,save failed.");
 		return responseJson(model);
 	}
-	
+
 	@ServiceLocation(value = "getTriflesByTime")
 	public Response getTriflesByTime(BaseRequest request) {
+		Map<String, String> timeConfig = GsonUtil.getMapFromJson(request.getExtraInfo());
+
+		String morningRemindTime = timeConfig.get("morningRemindTime");
+		String afternoonRemindTime = timeConfig.get("afternoonRemindTime");
+		String nightRemindTime = timeConfig.get("nightRemindTime");
+
+		String currentTime = DateUtil.getDateFormat(new Date(), "HH:mm");
+
+		Map<String, Object> model = new HashMap<String, Object>();
+		if (currentTime.equals(morningRemindTime) && isNotReminded(morningRemindTime, request)) {
+			bindTriflesModel(model, "00:00", "11:59", "morning.jpeg");
+			return sendEmail(model, "早上好，这是您上午的日程清单，请查收。");
+		} else if (currentTime.equals(afternoonRemindTime) && isNotReminded(afternoonRemindTime, request)) {
+			bindTriflesModel(model, "12:00", "18:59", "afternoon.jpeg");
+			return sendEmail(model, "中午好，这是您下午的日程清单，请查收。");
+		} else if (currentTime.equals(nightRemindTime) && isNotReminded(nightRemindTime, request)) {
+			bindTriflesModel(model, "19:00", "23:59", "night.jpeg");
+			return sendEmail(model, "晚上好，这是您晚上的日程清单，请查收。");
+		}
+
+		return null;
+	}
+
+	private void bindTriflesModel(Map<String, Object> model, String timeBegin, String timeEnd, String bannerImage) {
+		List<Map<String, Object>> result = familyDao.findRecordListByTime(timeBegin, timeEnd);
+		model.put("recordList", result);
+		model.put("bannerImage", bannerImage);
+		Map<String, Object> lifeMoto = lifeMotoDao.findRandomRecord();
+		model.put("lifeMoto", lifeMoto.get("moto"));
+	}
+
+	private Response sendEmail(Map<String, Object> model, String title) {
+		model.put("title", title);
+		SendEmailInfo info = new SendEmailInfo();
+		info.setHeadName(title);
+		Response response = response(model, "family/email");
+		info.setSendHtml(response.getContent());
+		EmailUtil.sendEmail(info);
+		return responseJson(null);
+	}
+
+	private boolean isNotReminded(String remindTime, BaseRequest request) {
 		HistoryRecord lastHistoryRecord = Context.findLastBackAssistantHistory(request.getAssistantType(),
 				request.getOriginRequest());
-		Map<String, String> timeConfig = GsonUtil.getMapFromJson(request.getExtraInfo());
-		
-		String[] timeList=timeConfig.get("rate").split(",");
-		
-		if(timeList!=null&&timeList.length>0){
-			String currentTime=DateUtil.getDateFormat(new Date(), "");
-			for(String time:timeList){
-			}
-		}
-		
-		return null;
+		return lastHistoryRecord == null
+				|| !remindTime.equals(DateUtil.getDateFormat(lastHistoryRecord.getCreateTime(), "HH:mm"));
 	}
 }
