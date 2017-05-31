@@ -10,7 +10,11 @@ import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
+import org.apache.log4j.Logger;
+
 public class EmailUtil {
+
+	private static Logger LOGGER = Logger.getLogger(EmailUtil.class);
 
 	private static Properties props = System.getProperties();
 
@@ -49,7 +53,7 @@ public class EmailUtil {
 					return new PasswordAuthentication(sendEmailInfo.getSendUname(), sendEmailInfo.getSendPwd());
 				}
 			});
-			//session.setDebug(true);
+			// session.setDebug(true);
 			MimeMessage message = new MimeMessage(session);
 
 			String nickName = javax.mail.internet.MimeUtility.encodeText(sendEmailInfo.getSendNickName());
@@ -67,7 +71,7 @@ public class EmailUtil {
 			transport.close();
 			return true;
 		} catch (Exception e) {
-
+			LOGGER.error(e);
 			return false;
 		}
 	}
@@ -162,18 +166,13 @@ public class EmailUtil {
 
 	public static void main(String[] args) {
 		SendEmailInfo info = new SendEmailInfo();
-		info.setHeadName("您上午的待办事项有8件，挺累的，加油吧！");
-		info.setSendHtml("邮件内容");
-		info.setSendUser("3434@163.com");
-		info.setSendUname("3434");
-		info.setSendNickName("我的助手");
-		info.setSendPwd("343434");
-		info.setReceiveUser("34343434@qq.com");
-
-		EmailUtil.sendEmail(info);
-
-		info.setHeadName("您上午的對對對有202件，挺累的，加油吧！");
-		info.setSendHtml("水電費水電費内容");
+		info.setHeadName("family_assistant_data_sync");
+		info.setSendHtml(GsonUtil.toJson(info));
+		info.setSendUser("dfdfd@163.com");
+		info.setSendUname("dfdfd");
+		info.setSendNickName("数据同步助手");
+		info.setSendPwd("dfdf");
+		info.setReceiveUser("dfdfd@163.com");
 
 		EmailUtil.sendEmail(info);
 	}
