@@ -19,13 +19,14 @@ import com.weihua.database.dao.FamilyDao;
 import com.weihua.database.dao.LifeMotoDao;
 import com.weihua.database.dao.impl.FamilyDaoImpl;
 import com.weihua.database.dao.impl.LifeMotoDaoImpl;
+import com.weihua.message.MessageConsumer;
 import com.weihua.util.DateUtil;
 import com.weihua.util.EmailUtil;
 import com.weihua.util.EmailUtil.SendEmailInfo;
 import com.weihua.util.ExceptionUtil;
 import com.weihua.util.GsonUtil;
 
-public class FamilyAssistant extends BaseAssistant {
+public class FamilyAssistant extends BaseAssistant implements MessageConsumer{
 
 	private static Logger LOGGER = Logger.getLogger(FamilyAssistant.class);
 
@@ -176,5 +177,10 @@ public class FamilyAssistant extends BaseAssistant {
 				request.getOriginRequest());
 		return lastHistoryRecord == null
 				|| !remindTime.equals(DateUtil.getDateFormat(lastHistoryRecord.getCreateTime(), "HH:mm"));
+	}
+
+	@Override
+	public void doHandle(String message) {
+		LOGGER.info("Recieved message:"+message);
 	}
 }
