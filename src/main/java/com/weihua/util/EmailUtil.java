@@ -189,8 +189,7 @@ public class EmailUtil {
 		}
 
 		public void setSendHtml(String sendHtml) {
-			if (sendHtml != null)
-				this.sendHtml = MAIL_CONTENT_START + sendHtml + MAIL_CONTENT_END;
+			this.sendHtml = sendHtml;
 		}
 	}
 
