@@ -6,6 +6,7 @@ import java.util.concurrent.Executors;
 import org.apache.log4j.Logger;
 
 import com.weihua.util.EmailUtil;
+import com.weihua.util.StringUtil;
 import com.weihua.util.EmailUtil.SendEmailInfo;
 
 public class MessageService {
@@ -23,13 +24,20 @@ public class MessageService {
 				try {
 					SendEmailInfo sendEmailInfo = new SendEmailInfo();
 					sendEmailInfo.setHeadName(messageSubject);
-					sendEmailInfo.setSendHtml(messageContent);
+					sendEmailInfo.setSendHtml(serialize(messageContent));
 					EmailUtil.sendEmail(sendEmailInfo);
 				} catch (Exception e) {
-					LOGGER.error("消息发送异常：[messageSubject:" + messageSubject + ",messageContent:" + messageContent + "]",
+					LOGGER.error("Send message error：[messageSubject:" + messageSubject + ",messageContent:" + messageContent + "]",
 							e);
 				}
 			}
 		});
+	}
+
+	private static String serialize(String content) {
+		if (!StringUtil.isEmpty(content)) {
+			return MessageConstant.MAIL_CONTENT_START + content + MessageConstant.MAIL_CONTENT_END;
+		}
+		return content;
 	}
 }

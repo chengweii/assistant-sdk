@@ -16,6 +16,7 @@ import javax.mail.BodyPart;
 import javax.mail.Flags;
 import javax.mail.Folder;
 import javax.mail.Message;
+import javax.mail.MessagingException;
 import javax.mail.Multipart;
 import javax.mail.Part;
 import javax.mail.PasswordAuthentication;
@@ -38,9 +39,6 @@ import com.sun.mail.pop3.POP3Message;
 public class EmailUtil {
 
 	private static Logger LOGGER = Logger.getLogger(EmailUtil.class);
-
-	private static final String MAIL_CONTENT_START = "##MAIL_START##";
-	private static final String MAIL_CONTENT_END = "##MAIL_END##";
 
 	private static Properties props = System.getProperties();
 
@@ -316,42 +314,27 @@ public class EmailUtil {
 		}
 	}
 
-	private static String removeAdvertising(String content) {
-		if (!StringUtil.isEmpty(content)) {
-			int start = content.indexOf(MAIL_CONTENT_START);
-			int end = content.indexOf(MAIL_CONTENT_END);
-			if (start != -1 && end > start) {
-				return content.substring(MAIL_CONTENT_START.length(), end);
-			}
-		}
-		return content;
-	}
-
-	private static Store receiveStore = null;
-	private static Folder receiveFolder = null;
-
 	public static List<EmailEntity> receiveMail(final ReceiveEmailInfo receiveEmailInfo) {
 		List<EmailEntity> mailList = new ArrayList<EmailEntity>();
 
 		URLName urln = null;
+		Store receiveStore = null;
+		Folder receiveFolder = null;
 		try {
-			if (receiveStore == null || !receiveStore.isConnected()) {
-				urln = new URLName(Config.MAIL_TYPE, Config.MAIL_HOST, Config.MAIL_PORT, null,
-						receiveEmailInfo.getUserName(), receiveEmailInfo.getPassWord());
+			urln = new URLName(Config.MAIL_TYPE, Config.MAIL_HOST, Config.MAIL_PORT, null,
+					receiveEmailInfo.getUserName(), receiveEmailInfo.getPassWord());
 
-				Properties properties = System.getProperties();
-				properties.put("mail.smtp.host", Config.MAIL_HOST);
-				properties.put("mail.smtp.auth", Config.MAIL_AUTH);
-				Session sessionMail = Session.getDefaultInstance(properties, new Authenticator() {
-					protected PasswordAuthentication getPasswordAuthentication() {
-						return new PasswordAuthentication(receiveEmailInfo.getUserName(),
-								receiveEmailInfo.getPassWord());
-					}
-				});
+			Properties properties = System.getProperties();
+			properties.put("mail.smtp.host", Config.MAIL_HOST);
+			properties.put("mail.smtp.auth", Config.MAIL_AUTH);
+			Session sessionMail = Session.getDefaultInstance(properties, new Authenticator() {
+				protected PasswordAuthentication getPasswordAuthentication() {
+					return new PasswordAuthentication(receiveEmailInfo.getUserName(), receiveEmailInfo.getPassWord());
+				}
+			});
 
-				receiveStore = sessionMail.getStore(urln);
-				receiveStore.connect();
-			}
+			receiveStore = sessionMail.getStore(urln);
+			receiveStore.connect();
 
 			receiveFolder = receiveStore.getFolder("INBOX");
 			receiveFolder.open(Folder.READ_WRITE);
@@ -369,9 +352,9 @@ public class EmailUtil {
 			}
 
 			if (messages != null && messages.length > 0) {
-				
+
 				LOGGER.info("Email count：" + messages.length);
-				
+
 				for (int i = 0; i < messages.length; i++) {
 					EmailEntity entity = new EmailEntity();
 
@@ -390,7 +373,7 @@ public class EmailUtil {
 					String subject = getSubject(messages[i]);
 					entity.setSubject(subject);
 					messageLog.append("subject:").append(subject).append(Config.LOG_SPERATOR);
-					entity.setContent(removeAdvertising(bodytext.toString()));
+					entity.setContent(bodytext.toString());
 					messageLog.append("content:").append(entity.getContent()).append(Config.LOG_SPERATOR);
 					String sendTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
 							.format(((MimeMessage) messages[i]).getSentDate());
@@ -411,10 +394,25 @@ public class EmailUtil {
 					mailList.add(entity);
 				}
 			}
-			
+
 			receiveFolder.close(true);
 		} catch (Exception e) {
 			ExceptionUtil.propagate(LOGGER, e);
+		} finally {
+			if (receiveFolder != null && receiveFolder.isOpen()) {
+				try {
+					receiveFolder.close(true);
+				} catch (MessagingException e) {
+					LOGGER.error(e.getMessage(), e);
+				}
+			}
+			if (receiveStore.isConnected()) {
+				try {
+					receiveStore.close();
+				} catch (MessagingException e) {
+					LOGGER.error(e.getMessage(), e);
+				}
+			}
 		}
 
 		return mailList;
@@ -527,7 +525,7 @@ public class EmailUtil {
 
 	public static void main(String[] args) {
 
-		SendEmailInfo info = new SendEmailInfo();
+		/*SendEmailInfo info = new SendEmailInfo();
 		info.setSendUser("erwerw@163.com");
 		info.setSendUname("erwerw");
 		info.setSendNickName("数据同步助手");
@@ -536,12 +534,12 @@ public class EmailUtil {
 		info.setHeadName("family_assistant_data_sync_" + DateUtil.getDateFormat(new Date()));
 		info.setSendHtml(GsonUtil.toJson(info));
 
-		EmailUtil.sendEmail(info);
+		EmailUtil.sendEmail(info);*/
 
 		ReceiveEmailInfo rinfo = new ReceiveEmailInfo();
-		rinfo.setUserName("ssdfsd@163.com");
-		rinfo.setPassWord("sdfsdsd");
-		rinfo.setSenderFilter("");
+		rinfo.setUserName("12312@163.com");
+		rinfo.setPassWord("123123");
+		rinfo.setSenderFilter("123123@163.com");
 		rinfo.setDelete(false);
 
 		EmailUtil.receiveMail(rinfo);
