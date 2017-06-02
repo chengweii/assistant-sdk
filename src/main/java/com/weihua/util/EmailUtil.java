@@ -520,22 +520,25 @@ public class EmailUtil {
 	}
 
 	public static void main(String[] args) {
-		/*
-		 * SendEmailInfo info = new SendEmailInfo();
-		 * info.setSendUser("erwerw@163.com"); info.setSendUname("erwerw");
-		 * info.setSendNickName("数据同步助手"); info.setSendPwd("erwerw");
-		 * info.setReceiveUser("erwerw@163.com");
-		 * info.setHeadName("family_assistant_data_sync_" +
-		 * DateUtil.getDateFormat(new Date()));
-		 * info.setSendHtml(GsonUtil.toJson(info));
-		 * 
-		 * EmailUtil.sendEmail(info);
-		 * 
-		 * ReceiveEmailInfo rinfo = new ReceiveEmailInfo();
-		 * rinfo.setUserName("ssdfsd@163.com"); rinfo.setPassWord("sdfsdsd");
-		 * rinfo.setSenderFilter(""); rinfo.setDelete(false);
-		 * 
-		 * EmailUtil.receiveMail(rinfo);
-		 */
+
+		SendEmailInfo info = new SendEmailInfo();
+		info.setSendUser("erwerw@163.com");
+		info.setSendUname("erwerw");
+		info.setSendNickName("数据同步助手");
+		info.setSendPwd("erwerw");
+		info.setReceiveUser("erwerw@163.com");
+		info.setHeadName("family_assistant_data_sync_" + DateUtil.getDateFormat(new Date()));
+		info.setSendHtml(GsonUtil.toJson(info));
+
+		EmailUtil.sendEmail(info);
+
+		ReceiveEmailInfo rinfo = new ReceiveEmailInfo();
+		rinfo.setUserName("ssdfsd@163.com");
+		rinfo.setPassWord("sdfsdsd");
+		rinfo.setSenderFilter("");
+		rinfo.setDelete(false);
+
+		EmailUtil.receiveMail(rinfo);
+
 	}
 }
