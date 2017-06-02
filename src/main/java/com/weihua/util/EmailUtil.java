@@ -16,7 +16,6 @@ import javax.mail.BodyPart;
 import javax.mail.Flags;
 import javax.mail.Folder;
 import javax.mail.Message;
-import javax.mail.MessagingException;
 import javax.mail.Multipart;
 import javax.mail.Part;
 import javax.mail.PasswordAuthentication;
@@ -100,6 +99,7 @@ public class EmailUtil {
 			transport.connect(sendEmailInfo.getValueSmtp(), sendEmailInfo.getSendUname(), sendEmailInfo.getSendPwd());
 			transport.sendMessage(message, message.getAllRecipients());
 			transport.close();
+			LOGGER.info("Message sent successfully:" + content);
 		} catch (Exception e) {
 			ExceptionUtil.propagate(LOGGER, e);
 		}
@@ -351,10 +351,10 @@ public class EmailUtil {
 
 				receiveStore = sessionMail.getStore(urln);
 				receiveStore.connect();
-
-				receiveFolder = receiveStore.getFolder("INBOX");
-				receiveFolder.open(Folder.READ_WRITE);
 			}
+
+			receiveFolder = receiveStore.getFolder("INBOX");
+			receiveFolder.open(Folder.READ_WRITE);
 
 			Message[] messages = null;
 
@@ -368,45 +368,51 @@ public class EmailUtil {
 				messages = receiveFolder.getMessages(count, count);
 			}
 
-			LOGGER.info("Email count：" + messages.length);
+			if (messages != null && messages.length > 0) {
+				
+				LOGGER.info("Email count：" + messages.length);
+				
+				for (int i = 0; i < messages.length; i++) {
+					EmailEntity entity = new EmailEntity();
 
-			for (int i = 0; i < messages.length; i++) {
-				EmailEntity entity = new EmailEntity();
+					StringBuffer bodytext = new StringBuffer();
+					getMailContent((Part) messages[i], bodytext);
+					if (isContainAttach((Part) messages[i])) {
+						saveAttachMent((Part) messages[i], Config.MAIL_ATTACH_PATH);
+					}
 
-				StringBuffer bodytext = new StringBuffer();
-				getMailContent((Part) messages[i], bodytext);
-				if (isContainAttach((Part) messages[i])) {
-					saveAttachMent((Part) messages[i], Config.MAIL_ATTACH_PATH);
+					StringBuffer messageLog = new StringBuffer();
+					messageLog.append("-----------------Email content start-----------------")
+							.append(Config.LOG_SPERATOR);
+					String sender = getFrom(messages[i]);
+					entity.setSender(sender);
+					messageLog.append("sender:").append(sender).append(Config.LOG_SPERATOR);
+					String subject = getSubject(messages[i]);
+					entity.setSubject(subject);
+					messageLog.append("subject:").append(subject).append(Config.LOG_SPERATOR);
+					entity.setContent(removeAdvertising(bodytext.toString()));
+					messageLog.append("content:").append(entity.getContent()).append(Config.LOG_SPERATOR);
+					String sendTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+							.format(((MimeMessage) messages[i]).getSentDate());
+					entity.setSendTime(sendTime);
+					messageLog.append("send time:").append(sendTime).append(Config.LOG_SPERATOR);
+					boolean hasAttachment = isContainAttach((Part) messages[i]) ? true : false;
+					entity.setHasAttachment(hasAttachment);
+					messageLog.append("hasAttachment:").append(hasAttachment).append(Config.LOG_SPERATOR);
+					messageLog.append("-----------------Email content end-----------------");
+
+					LOGGER.info(messageLog);
+
+					if (receiveEmailInfo.isDelete()) {
+						messages[i].setFlag(Flags.Flag.DELETED, true);
+					}
+					((POP3Message) messages[i]).invalidate(true);
+
+					mailList.add(entity);
 				}
-
-				StringBuffer messageLog = new StringBuffer();
-				messageLog.append("-----------------Email content start-----------------").append(Config.LOG_SPERATOR);
-				String sender = getFrom(messages[i]);
-				entity.setSender(sender);
-				messageLog.append("sender:").append(sender).append(Config.LOG_SPERATOR);
-				String subject = getSubject(messages[i]);
-				entity.setSubject(subject);
-				messageLog.append("subject:").append(subject).append(Config.LOG_SPERATOR);
-				entity.setContent(removeAdvertising(bodytext.toString()));
-				messageLog.append("content:").append(entity.getContent()).append(Config.LOG_SPERATOR);
-				String sendTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
-						.format(((MimeMessage) messages[i]).getSentDate());
-				entity.setSendTime(sendTime);
-				messageLog.append("send time:").append(sendTime).append(Config.LOG_SPERATOR);
-				boolean hasAttachment = isContainAttach((Part) messages[i]) ? true : false;
-				entity.setHasAttachment(hasAttachment);
-				messageLog.append("hasAttachment:").append(hasAttachment).append(Config.LOG_SPERATOR);
-				messageLog.append("-----------------Email content end-----------------");
-
-				LOGGER.info(messageLog);
-
-				if (receiveEmailInfo.isDelete()) {
-					messages[i].setFlag(Flags.Flag.DELETED, true);
-				}
-				((POP3Message) messages[i]).invalidate(true);
-
-				mailList.add(entity);
 			}
+			
+			receiveFolder.close(true);
 		} catch (Exception e) {
 			ExceptionUtil.propagate(LOGGER, e);
 		}
