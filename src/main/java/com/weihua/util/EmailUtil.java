@@ -327,29 +327,34 @@ public class EmailUtil {
 		return content;
 	}
 
+	private static Store receiveStore = null;
+	private static Folder receiveFolder = null;
+
 	public static List<EmailEntity> receiveMail(final ReceiveEmailInfo receiveEmailInfo) {
 		List<EmailEntity> mailList = new ArrayList<EmailEntity>();
 
-		Store store = null;
-		Folder folder = null;
 		URLName urln = null;
 		try {
-			urln = new URLName(Config.MAIL_TYPE, Config.MAIL_HOST, Config.MAIL_PORT, null,
-					receiveEmailInfo.getUserName(), receiveEmailInfo.getPassWord());
+			if (receiveStore == null || !receiveStore.isConnected()) {
+				urln = new URLName(Config.MAIL_TYPE, Config.MAIL_HOST, Config.MAIL_PORT, null,
+						receiveEmailInfo.getUserName(), receiveEmailInfo.getPassWord());
 
-			Properties properties = System.getProperties();
-			properties.put("mail.smtp.host", Config.MAIL_HOST);
-			properties.put("mail.smtp.auth", Config.MAIL_AUTH);
-			Session sessionMail = Session.getDefaultInstance(properties, new Authenticator() {
-				protected PasswordAuthentication getPasswordAuthentication() {
-					return new PasswordAuthentication(receiveEmailInfo.getUserName(), receiveEmailInfo.getPassWord());
-				}
-			});
+				Properties properties = System.getProperties();
+				properties.put("mail.smtp.host", Config.MAIL_HOST);
+				properties.put("mail.smtp.auth", Config.MAIL_AUTH);
+				Session sessionMail = Session.getDefaultInstance(properties, new Authenticator() {
+					protected PasswordAuthentication getPasswordAuthentication() {
+						return new PasswordAuthentication(receiveEmailInfo.getUserName(),
+								receiveEmailInfo.getPassWord());
+					}
+				});
 
-			store = sessionMail.getStore(urln);
-			store.connect();
-			folder = store.getFolder("INBOX");
-			folder.open(Folder.READ_WRITE);
+				receiveStore = sessionMail.getStore(urln);
+				receiveStore.connect();
+
+				receiveFolder = receiveStore.getFolder("INBOX");
+				receiveFolder.open(Folder.READ_WRITE);
+			}
 
 			Message[] messages = null;
 
@@ -357,10 +362,10 @@ public class EmailUtil {
 				SearchTerm st = new AndTerm(new FromStringTerm(receiveEmailInfo.getSenderFilter()),
 						new SubjectTerm(StringUtil.isEmpty(receiveEmailInfo.getSubjectFilter()) ? ""
 								: receiveEmailInfo.getSubjectFilter()));
-				messages = folder.search(st);
+				messages = receiveFolder.search(st);
 			} else {
-				int count = folder.getMessageCount();
-				messages = folder.getMessages(count, count);
+				int count = receiveFolder.getMessageCount();
+				messages = receiveFolder.getMessages(count, count);
 			}
 
 			LOGGER.info("Email count：" + messages.length);
@@ -404,21 +409,6 @@ public class EmailUtil {
 			}
 		} catch (Exception e) {
 			ExceptionUtil.propagate(LOGGER, e);
-		} finally {
-			if (folder != null && folder.isOpen()) {
-				try {
-					folder.close(true);
-				} catch (MessagingException e) {
-					LOGGER.error(e.getMessage(), e);
-				}
-			}
-			if (store.isConnected()) {
-				try {
-					store.close();
-				} catch (MessagingException e) {
-					LOGGER.error(e.getMessage(), e);
-				}
-			}
 		}
 
 		return mailList;
@@ -530,23 +520,22 @@ public class EmailUtil {
 	}
 
 	public static void main(String[] args) {
-		SendEmailInfo info = new SendEmailInfo();
-		info.setSendUser("erwerw@163.com");
-		info.setSendUname("erwerw");
-		info.setSendNickName("数据同步助手");
-		info.setSendPwd("erwerw");
-		info.setReceiveUser("erwerw@163.com");
-		info.setHeadName("family_assistant_data_sync_" + DateUtil.getDateFormat(new Date()));
-		info.setSendHtml(GsonUtil.toJson(info));
-
-		EmailUtil.sendEmail(info);
-
-		ReceiveEmailInfo rinfo = new ReceiveEmailInfo();
-		rinfo.setUserName("erwerw@163.com");
-		rinfo.setPassWord("erwerw@163.com");
-		rinfo.setSenderFilter("erwerw@163.com");
-		rinfo.setDelete(false);
-
-		EmailUtil.receiveMail(rinfo);
+		/*
+		 * SendEmailInfo info = new SendEmailInfo();
+		 * info.setSendUser("erwerw@163.com"); info.setSendUname("erwerw");
+		 * info.setSendNickName("数据同步助手"); info.setSendPwd("erwerw");
+		 * info.setReceiveUser("erwerw@163.com");
+		 * info.setHeadName("family_assistant_data_sync_" +
+		 * DateUtil.getDateFormat(new Date()));
+		 * info.setSendHtml(GsonUtil.toJson(info));
+		 * 
+		 * EmailUtil.sendEmail(info);
+		 * 
+		 * ReceiveEmailInfo rinfo = new ReceiveEmailInfo();
+		 * rinfo.setUserName("ssdfsd@163.com"); rinfo.setPassWord("sdfsdsd");
+		 * rinfo.setSenderFilter(""); rinfo.setDelete(false);
+		 * 
+		 * EmailUtil.receiveMail(rinfo);
+		 */
 	}
 }
