@@ -7,7 +7,6 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 
-import com.google.gson.reflect.TypeToken;
 import com.weihua.assistant.constant.OriginType;
 import com.weihua.assistant.context.Context;
 import com.weihua.assistant.context.Context.HistoryRecord;
@@ -21,7 +20,6 @@ import com.weihua.database.dao.LifeMotoDao;
 import com.weihua.database.dao.impl.FamilyDaoImpl;
 import com.weihua.database.dao.impl.HolidayArrangementDaoImpl;
 import com.weihua.database.dao.impl.LifeMotoDaoImpl;
-import com.weihua.message.MessageConsumer;
 import com.weihua.util.DateUtil;
 import com.weihua.util.EmailUtil;
 import com.weihua.util.EmailUtil.SendEmailInfo;
@@ -29,7 +27,7 @@ import com.weihua.util.ExceptionUtil;
 import com.weihua.util.GsonUtil;
 import com.weihua.util.StringUtil;
 
-public class FamilyAssistant extends BaseAssistant implements MessageConsumer {
+public class FamilyAssistant extends BaseAssistant {
 
 	private static Logger LOGGER = Logger.getLogger(FamilyAssistant.class);
 
@@ -186,20 +184,4 @@ public class FamilyAssistant extends BaseAssistant implements MessageConsumer {
 				|| !remindTime.equals(DateUtil.getDateFormat(lastHistoryRecord.getCreateTime(), "HH:mm"));
 	}
 
-	@Override
-	public void doHandle(String message) {
-		LOGGER.info("Recieved message:" + message);
-		String[] records = GsonUtil.getEntityFromJson(message, new TypeToken<String[]>() {
-		});
-		String[][] result = new String[records.length][5];
-		for (int i = 0; i < records.length; i++) {
-			String[] params = records[i].split("##");
-			result[i][0] = params[0];
-			result[i][1] = params[2];
-			result[i][2] = params[2];
-			result[i][3] = params[1];
-			result[i][4] = params[3];
-		}
-		familyDao.syncAllRecord(result);
-	}
 }

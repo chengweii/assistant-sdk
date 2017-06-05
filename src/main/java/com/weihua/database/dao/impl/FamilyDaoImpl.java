@@ -44,7 +44,7 @@ public class FamilyDaoImpl extends BaseDao implements FamilyDao {
 	@Override
 	public int[] syncAllRecord(Object[][] params) {
 		String dsql = "delete from life_record";
-		dBHelper.queryUpdate(LOGGER, dsql, null);
+		dBHelper.queryUpdate(LOGGER, dsql);
 		String sql = "insert into life_record (type_name,record_title,record_content,record_time,optimization) values(?,?,?,?,?)";
 		return dBHelper.queryBatch(LOGGER, sql, params);
 	}

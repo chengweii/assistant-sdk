@@ -17,4 +17,12 @@ public class LifeMotoDaoImpl extends BaseDao implements LifeMotoDao {
 		return result;
 	}
 
+	@Override
+	public int[] syncAllRecord(Object[][] params) {
+		String dsql = "delete from life_moto";
+		dBHelper.queryUpdate(LOGGER, dsql);
+		String sql = "insert into life_moto (moto) values(?)";
+		return dBHelper.queryBatch(LOGGER, sql, params);
+	}
+
 }
