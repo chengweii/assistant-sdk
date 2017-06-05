@@ -14,31 +14,39 @@ public class FamilyDaoImpl extends BaseDao implements FamilyDao {
 	@Override
 	public List<Map<String, Object>> findRecordListByWord(String word) {
 		String sql = "select * from life_record where record_title like ?";
-		List<Map<String, Object>> result = dBHelper.queryMapList(LOGGER, sql,"%"+word+"%");
+		List<Map<String, Object>> result = dBHelper.queryMapList(LOGGER, sql, "%" + word + "%");
 		return result;
 	}
 
 	@Override
 	public Map<String, Object> findRecordById(Integer id) {
 		String sql = "select * from life_record where id=?";
-		Map<String, Object> result = dBHelper.queryMap(LOGGER, sql,id);
+		Map<String, Object> result = dBHelper.queryMap(LOGGER, sql, id);
 		return result;
 	}
 
 	@Override
 	public int modifyRecord(Object... params) {
 		String sql = "insert into life_record (type_name,record_title,record_content,record_time,optimization) values(?,?,?,?,?)";
-		if(params.length > 5){
+		if (params.length > 5) {
 			sql = "update life_record set type_name=?,record_title=?,record_content=?,record_time=?,optimization=? where id=?";
 		}
 		return dBHelper.queryUpdate(LOGGER, sql, params);
 	}
-	
+
 	@Override
-	public List<Map<String, Object>> findRecordListByTime(String timeBegin,String timeEnd) {
-		String sql = "select * from life_record where record_time >= ? and record_time <= ? order by record_time asc";
-		List<Map<String, Object>> result = dBHelper.queryMapList(LOGGER, sql,timeBegin,timeEnd);
+	public List<Map<String, Object>> findRecordListByTime(String timeBegin, String timeEnd, String typeWord) {
+		String sql = "select * from life_record where record_time >= ? and record_time <= ? and type_name like ? order by record_time asc";
+		List<Map<String, Object>> result = dBHelper.queryMapList(LOGGER, sql, timeBegin, timeEnd, "%" + typeWord + "%");
 		return result;
+	}
+
+	@Override
+	public int[] syncAllRecord(Object[][] params) {
+		String dsql = "delete from life_record";
+		dBHelper.queryUpdate(LOGGER, dsql, null);
+		String sql = "insert into life_record (type_name,record_title,record_content,record_time,optimization) values(?,?,?,?,?)";
+		return dBHelper.queryBatch(LOGGER, sql, params);
 	}
 
 }

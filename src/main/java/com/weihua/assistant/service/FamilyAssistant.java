@@ -8,6 +8,7 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 
+import com.google.gson.reflect.TypeToken;
 import com.weihua.assistant.constant.OriginType;
 import com.weihua.assistant.context.Context;
 import com.weihua.assistant.context.Context.HistoryRecord;
@@ -16,8 +17,10 @@ import com.weihua.assistant.entity.request.Request;
 import com.weihua.assistant.entity.response.Response;
 import com.weihua.assistant.service.annotation.ServiceLocation;
 import com.weihua.database.dao.FamilyDao;
+import com.weihua.database.dao.HolidayArrangementDao;
 import com.weihua.database.dao.LifeMotoDao;
 import com.weihua.database.dao.impl.FamilyDaoImpl;
+import com.weihua.database.dao.impl.HolidayArrangementDaoImpl;
 import com.weihua.database.dao.impl.LifeMotoDaoImpl;
 import com.weihua.message.MessageConsumer;
 import com.weihua.util.DateUtil;
@@ -26,13 +29,15 @@ import com.weihua.util.EmailUtil.SendEmailInfo;
 import com.weihua.util.ExceptionUtil;
 import com.weihua.util.GsonUtil;
 
-public class FamilyAssistant extends BaseAssistant implements MessageConsumer{
+public class FamilyAssistant extends BaseAssistant implements MessageConsumer {
 
 	private static Logger LOGGER = Logger.getLogger(FamilyAssistant.class);
 
 	private static FamilyDao familyDao = new FamilyDaoImpl();
 
 	private static LifeMotoDao lifeMotoDao = new LifeMotoDaoImpl();
+
+	private static HolidayArrangementDao holidayArrangementDao = new HolidayArrangementDaoImpl();
 
 	@Override
 	public Response getResponse(Request request) {
@@ -155,7 +160,9 @@ public class FamilyAssistant extends BaseAssistant implements MessageConsumer{
 	}
 
 	private void bindTriflesModel(Map<String, Object> model, String timeBegin, String timeEnd, String bannerImage) {
-		List<Map<String, Object>> result = familyDao.findRecordListByTime(timeBegin, timeEnd);
+		boolean isHoliday = holidayArrangementDao.findIsHoliday(DateUtil.getDateFormat(new Date()));
+		List<Map<String, Object>> result = familyDao.findRecordListByTime(timeBegin, timeEnd,
+				isHoliday ? "休息日" : "工作日");
 		model.put("recordList", result);
 		model.put("bannerImage", bannerImage);
 		Map<String, Object> lifeMoto = lifeMotoDao.findRandomRecord();
@@ -181,6 +188,18 @@ public class FamilyAssistant extends BaseAssistant implements MessageConsumer{
 
 	@Override
 	public void doHandle(String message) {
-		LOGGER.info("Recieved message:"+message);
+		LOGGER.info("Recieved message:" + message);
+		String[] records = GsonUtil.getEntityFromJson(message, new TypeToken<String[]>() {
+		});
+		String[][] result = new String[records.length][5];
+		for (int i = 0; i < records.length; i++) {
+			String[] params = records[i].split("##");
+			result[i][0] = params[0];
+			result[i][1] = params[2];
+			result[i][2] = params[2];
+			result[i][3] = params[1];
+			result[i][4] = params[3];
+		}
+		familyDao.syncAllRecord(result);
 	}
 }

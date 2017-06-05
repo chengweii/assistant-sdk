@@ -10,5 +10,7 @@ public interface FamilyDao {
 
 	int modifyRecord(Object... params);
 
-	List<Map<String, Object>> findRecordListByTime(String timeBegin, String timeEnd);
+	List<Map<String, Object>> findRecordListByTime(String timeBegin, String timeEnd, String typeWord);
+
+	int[] syncAllRecord(Object[][] params);
 }
