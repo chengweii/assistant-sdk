@@ -18,13 +18,14 @@
                         <button type="submit" class="btn btn-sm ding">Ding</button>
                     </div>
                 </header>
-                <% for(item in recordList){ %>
+                <%if(recordList!=null){
+                	for(item in recordList){ %>
                 <div class="media">
                     <div class="media-body ${assistantName}-item" item-id="${item.id}">
-                    	<%if(item.type_name=="琐事"){%>
-                    	<span class="label label-success">${item.type_name}</span>
-                    	<%}else{%>
+                    	<%if(item.type_name=="待办"){%>
                     	<span class="label label-danger">${item.type_name}</span>
+                    	<%}else{%>
+                    	<span class="label label-success">${item.type_name}</span>
                     	<%}%>
                     	<font style="font-size: 25px;">${item.record_time}</font>
                         <font style="font-size: 18px;">${item.record_title}</font>
@@ -32,7 +33,8 @@
                         <small>建议：${item.optimization}</small>
                     </div>
                 </div>
-                <%}%>
+                <%	}
+                }%>
 			</div>
 		</div>
 		<div class="clearfix"></div>

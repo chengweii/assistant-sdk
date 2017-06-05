@@ -1,6 +1,5 @@
 package com.weihua.assistant.service;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -28,6 +27,7 @@ import com.weihua.util.EmailUtil;
 import com.weihua.util.EmailUtil.SendEmailInfo;
 import com.weihua.util.ExceptionUtil;
 import com.weihua.util.GsonUtil;
+import com.weihua.util.StringUtil;
 
 public class FamilyAssistant extends BaseAssistant implements MessageConsumer {
 
@@ -59,12 +59,12 @@ public class FamilyAssistant extends BaseAssistant implements MessageConsumer {
 	public Response getRecordListByWord(BaseRequest request) {
 		String extraInfo = request.getExtraInfo();
 		Map<String, String> extraInfoMap = GsonUtil.getMapFromJson(extraInfo);
-		String word = "";
-		if (extraInfoMap != null && extraInfoMap.get("word") != null) {
+		String word = null;
+		if (extraInfoMap != null && !StringUtil.isEmpty(extraInfoMap.get("word"))) {
 			word = extraInfoMap.get("word");
 		}
-		List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
-		if (!"".equals(word))
+		List<Map<String, Object>> result = null;
+		if (word != null)
 			result = familyDao.findRecordListByWord(word);
 
 		Map<String, Object> model = new HashMap<String, Object>();
