@@ -64,9 +64,46 @@
                                                 <td height="15">
                                                 </td>
                                             </tr>
-
+                                            
+                                            <% for(item in taskList){ %>
                                             <!--item-->
+                                            <tr>
+                                                <td data-link-style="text-decoration:none; color:#414a51;" data-link-color="Headline Link" data-color="Headline" data-size="Headline"
+                                                    align="left" style="font-family: 'Open Sans', Arial, sans-serif; font-size: 22px;color:#414a51;font-weight: bold;">
+                                                    <a href="#" style="text-decoration:none;color:#ffffff;background:#31af64;border-radius:4px;padding:3px;font-size: 15px;line-height: 26px;"
+                                                        data-color="Button Link">${item.record_time}</a>
+                                                    <singleline style="font-size: 15px;">
+                                                        	${item.record_title}
+                                                    </singleline>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td height="5">
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td data-link-style="text-decoration:none; color:#ff646a;" data-link-color="Content Link" data-color="Content" data-size="Content"
+                                                    align="left" style="font-family: 'Open sans', Arial, sans-serif;color:#7f8c8d;font-size: 12px;line-height: 20px;"
+                                                    class="editable">
+                                                    <multiline>
+                                                        ${item.optimization}
+                                                    </multiline>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td height="5">
+                                                </td>
+                                            </tr>
+                                            <!--end item-->
+                                            <%}%>
+                                            
+                                            <tr>
+                                                <td height="20">
+                                                </td>
+                                            </tr>
+                                            
                                             <% for(item in recordList){ %>
+                                            <!--item-->
                                             <tr>
                                                 <td data-link-style="text-decoration:none; color:#414a51;" data-link-color="Headline Link" data-color="Headline" data-size="Headline"
                                                     align="left" style="font-family: 'Open Sans', Arial, sans-serif; font-size: 22px;color:#414a51;font-weight: bold;">
@@ -95,7 +132,7 @@
                                                 </td>
                                             </tr>
                                             <!--end item-->
-                                            <%}%>
+                                            <%}%> 
 
                                             <tr>
                                                 <td height="20">

@@ -51,12 +51,17 @@ public class HttpUtil {
 			conn = (HttpURLConnection) uUrl.openConnection();
 			conn.setRequestProperty("content-type", "application/x-www-form-urlencoded");
 			conn.setRequestMethod(method.toString());
-			// conn.setDoOutput(true);
-			// conn.setDoInput(true);
 			conn.setConnectTimeout(connectTimeout);
 			conn.setReadTimeout(readTimeout);
 
 			if (headers != null && headers.size() > 0) {
+				if ("true".equals(headers.get("doOutput"))) {
+					conn.setDoOutput(true);
+				}
+				if ("true".equals(headers.get("doInput"))) {
+					conn.setDoInput(true);
+				}
+
 				Set<String> headerSet = headers.keySet();
 				for (String key : headerSet) {
 					conn.setRequestProperty(key, headers.get(key));
@@ -180,7 +185,7 @@ public class HttpUtil {
 	}
 
 	public static void main(String[] args) {
-		String content = get("http://web.sqt.gtimg.cn/q=sz000651?r=0.6450336522583517",null, 5000, 5000,"GBK");
+		String content = get("http://web.sqt.gtimg.cn/q=sz000651?r=0.6450336522583517", null, 5000, 5000, "GBK");
 		System.out.println(content);
 	}
 
