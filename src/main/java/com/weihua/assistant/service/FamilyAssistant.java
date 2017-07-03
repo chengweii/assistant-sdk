@@ -8,14 +8,12 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 
-import com.google.gson.reflect.TypeToken;
 import com.weihua.assistant.constant.OriginType;
 import com.weihua.assistant.context.Context;
 import com.weihua.assistant.context.Context.HistoryRecord;
 import com.weihua.assistant.entity.request.BaseRequest;
 import com.weihua.assistant.entity.request.Request;
 import com.weihua.assistant.entity.response.Response;
-import com.weihua.assistant.service.FamilyAssistant.Task.Item;
 import com.weihua.assistant.service.annotation.ServiceLocation;
 import com.weihua.database.dao.FamilyDao;
 import com.weihua.database.dao.HolidayArrangementDao;
@@ -24,15 +22,14 @@ import com.weihua.database.dao.impl.FamilyDaoImpl;
 import com.weihua.database.dao.impl.HolidayArrangementDaoImpl;
 import com.weihua.database.dao.impl.LifeMotoDaoImpl;
 import com.weihua.util.DateUtil;
+import com.weihua.util.DidaListUtil;
+import com.weihua.util.DidaListUtil.Task;
+import com.weihua.util.DidaListUtil.Task.Item;
+import com.weihua.util.DidaListUtil.TaskType;
 import com.weihua.util.EmailUtil;
 import com.weihua.util.EmailUtil.SendEmailInfo;
-
-import okhttp3.ResponseBody;
-import retrofit2.Call;
-
 import com.weihua.util.ExceptionUtil;
 import com.weihua.util.GsonUtil;
-import com.weihua.util.RetrofitUtil;
 import com.weihua.util.StringUtil;
 
 public class FamilyAssistant extends BaseAssistant {
@@ -180,7 +177,7 @@ public class FamilyAssistant extends BaseAssistant {
 		List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
 		Task task;
 		try {
-			task = getTaskListFromDida365();
+			task = DidaListUtil.getTaskListFromDida365(TaskType.CURRENT_TRIFLES);
 			if (task != null && task.items != null && task.items.size() > 0) {
 				for (Item item : task.items) {
 					Map<String, Object> map = new HashMap<String, Object>();
@@ -219,107 +216,6 @@ public class FamilyAssistant extends BaseAssistant {
 				request.getOriginRequest());
 		return lastHistoryRecord == null
 				|| !remindTime.equals(DateUtil.getDateFormat(lastHistoryRecord.getCreateTime(), "HH:mm"));
-	}
-
-	public static Task getTaskListFromDida365() throws Exception {
-		LoginInfo loginInfo = new LoginInfo();
-		Call<ResponseBody> loginResult = RetrofitUtil.retrofitService.post(
-				"https://dida365.com/api/v2/user/signon?wc=true&remember=true",
-				RetrofitUtil.getJsonRequestBody(loginInfo), "");
-
-		retrofit2.Response<ResponseBody> loginResponse = loginResult.execute();
-		String loginContent = loginResponse.body().string();
-		Map<String, String> map = GsonUtil.getMapFromJson(loginContent);
-
-		Call<ResponseBody> taskResult = RetrofitUtil.retrofitService.get("https://dida365.com/api/v2/project/all/tasks",
-				"t=" + map.get("token"));
-
-		retrofit2.Response<ResponseBody> taskResponse = taskResult.execute();
-		String taskContent = taskResponse.body().string();
-		List<Task> taskList = GsonUtil.<ArrayList<Task>> getEntityFromJson(taskContent,
-				new TypeToken<ArrayList<Task>>() {
-				});
-
-		String taskTitle = DateUtil.getDateFormat(new Date(), "yyyyMMdd") + "日程安排";
-
-		for (Task task : taskList) {
-			if (taskTitle.equals(task.title)) {
-				return task;
-			}
-		}
-
-		return null;
-	}
-
-	private static final String decodeKey = "huawei";
-
-	private static String encode(String s, String key) {
-		String str = "";
-		int ch;
-		if (key.length() == 0) {
-			return s;
-		} else if (!s.equals(null)) {
-			for (int i = 0, j = 0; i < s.length(); i++, j++) {
-				if (j > key.length() - 1) {
-					j = j % key.length();
-				}
-				ch = s.codePointAt(i) + key.codePointAt(j);
-				if (ch > 65535) {
-					ch = ch % 65535;// ch - 33 = (ch - 33) % 95 ;
-				}
-				str += (char) ch;
-			}
-		}
-		return str;
-
-	}
-
-	private static String decode(String s, String key) {
-		String str = "";
-		int ch;
-		if (key.length() == 0) {
-			return s;
-		} else if (!s.equals(key)) {
-			for (int i = 0, j = 0; i < s.length(); i++, j++) {
-				if (j > key.length() - 1) {
-					j = j % key.length();
-				}
-				ch = (s.codePointAt(i) + 65535 - key.codePointAt(j));
-				if (ch > 65535) {
-					ch = ch % 65535;// ch - 33 = (ch - 33) % 95 ;
-				}
-				str += (char) ch;
-			}
-		}
-		return str;
-	}
-
-	static class LoginInfo {
-		public String username = decode("®°¢ª·ÖÚØÐä", decodeKey);
-		public String password = decode("ªª¨¬", decodeKey);
-	}
-	
-	public static void main(String[] args) throws Exception {
-		LoginInfo loginInfo=new LoginInfo();
-		System.out.println(loginInfo.password);
-		System.out.println(loginInfo.username);
-	}
-
-	static class Task {
-		public String id;
-		public String deleted;
-		public String startDate;
-		public String priority;
-		public String title;
-		public String content;
-		public String status;
-		public List<Item> items;
-
-		static class Item {
-			public String id;
-			public String title;
-			public String status;
-		}
 	}
 
 }

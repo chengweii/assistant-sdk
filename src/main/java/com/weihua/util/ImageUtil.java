@@ -71,8 +71,8 @@ public class ImageUtil {
 		imageGenerator.saveAsImage(imgFilePath);
 	}
 
-	public static void main(String[] args) {
-		generateImageFromHtml("<div><img src='http://zxpic.imtt.qq.com/zxpic_imtt/2017/07/02/1910/originalimage/191645_1466236765_1_550_367.jpg'><p>编号:10001</p></div>",
+	public static void main(String[] args) throws IOException {
+		generateImageFromHtml(FileUtil.getFileContent("C:/Users/Administrator/Desktop/临时/email.htm"),
 				"E:/10001.png");
 		System.out.println(encodeToString("E:/10001.png"));
 	}

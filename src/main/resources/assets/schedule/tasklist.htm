@@ -1,0 +1,33 @@
+<div class="col-md-4 ${assistantName}-${taskCode}-container" animate="true">
+
+	<div class="tile">
+		<h2 class="tile-title">${assistantTitle}-${taskValue}</h2>
+		<div class="tile-body p-10">
+			<div class="listview narrow ${assistantName}-list">
+				<% for(item in taskList){ %>
+				<div class="media ${assistantName}-${taskCode}-item" item-id="${item.id}">
+					<div class="pull-right">
+						<div class="counts"></div>
+					</div>
+					<div class="media-body">
+						<h6 class="status${item.status}">${item.title}</h6>
+					</div>
+				</div>
+				<%}%>
+			</div>
+		</div>
+		<div class="clearfix"></div>
+	</div>
+
+	<style>
+		.${assistantName}-${taskCode}-item .status1{
+			text-decoration:line-through;
+			color: grey;
+		}
+	</style>
+
+	<script>
+		assistant.keepAssistantContainerUnique('${assistantName}-${taskCode}-container');
+	</script>
+
+</div>

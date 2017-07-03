@@ -65,11 +65,13 @@ public class MainAssistant extends BaseAssistant {
 		Map<String, Object> model = new HashMap<String, Object>();
 		if (request.getContent() == null || request.getContent().equals("") || request.getContent().equals("管家")) {
 			model.put("welcomeMsg", "Hello,Master,What can I do for you?");
+			model.put("assistantList", new ArrayList<Map<String, Object>>());
 		} else {
 			model.put("welcomeMsg", "Sorry,Master,About \"" + request.getContent()
 					+ "\",I don't know too much yet,but I can provide you with the following help:");
+			model.put("assistantList", getAssistantMap());
 		}
-		model.put("assistantList", getAssistantMap());
+
 		return response(model, "main");
 	}
 
