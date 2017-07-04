@@ -65,7 +65,8 @@ public class MainAssistant extends BaseAssistant {
 	@ServiceLocation(value = "toHome")
 	public Response toHome(BaseRequest request) {
 		Map<String, Object> model = new HashMap<String, Object>();
-		if (request.getContent() == null || request.getContent().equals("") || request.getContent().equals("MyAssistant")) {
+		if (request.getContent() == null || request.getContent().equals("")
+				|| request.getContent().equals("MyAssistant")) {
 			model.put("welcomeMsg", "Hello,Master,What can I do for you?");
 			List<Map<String, Object>> commonServiceList = mainDao.findAssistantHistory(3);
 			if (CollectionUtil.isNotEmpty(commonServiceList)) {
@@ -124,7 +125,8 @@ public class MainAssistant extends BaseAssistant {
 		Assistant assistant = this;
 		try {
 			if (baseRequest.getOriginAssistantType() != AssistantType.MAIN_ASSISTANT) {
-				Class<?> assistantType = Class.forName(baseRequest.getAssistantType().getValue());
+				Class<?> assistantType = Class.forName(baseRequest.getOriginAssistantType().getValue());
+				baseRequest.setAssistantType(baseRequest.getOriginAssistantType());
 				assistant = (Assistant) assistantType.newInstance();
 			} else {
 				List<Map<String, Object>> assistantByRelatedWordList = mainDao.findAssistantByRelatedWordList();
