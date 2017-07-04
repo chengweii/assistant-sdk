@@ -17,7 +17,9 @@ import com.weihua.assistant.entity.response.Response;
 import com.weihua.assistant.service.annotation.ServiceLocation;
 import com.weihua.database.dao.MainDao;
 import com.weihua.database.dao.impl.MainDaoImpl;
+import com.weihua.util.CollectionUtil;
 import com.weihua.util.ExceptionUtil;
+import com.weihua.util.GsonUtil;
 
 public class MainAssistant extends BaseAssistant {
 	private static Logger LOGGER = Logger.getLogger(MainAssistant.class);
@@ -63,15 +65,23 @@ public class MainAssistant extends BaseAssistant {
 	@ServiceLocation(value = "toHome")
 	public Response toHome(BaseRequest request) {
 		Map<String, Object> model = new HashMap<String, Object>();
-		if (request.getContent() == null || request.getContent().equals("") || request.getContent().equals("管家")) {
+		if (request.getContent() == null || request.getContent().equals("") || request.getContent().equals("MyAssistant")) {
 			model.put("welcomeMsg", "Hello,Master,What can I do for you?");
-			model.put("assistantList", new ArrayList<Map<String, Object>>());
+			List<Map<String, Object>> commonServiceList = mainDao.findAssistantHistory(3);
+			if (CollectionUtil.isNotEmpty(commonServiceList)) {
+				List<Map<String, String>> array = new ArrayList<Map<String, String>>();
+				for (int i = 0; i < commonServiceList.size(); i++) {
+					Map<String, String> map = GsonUtil
+							.getMapFromJson(String.valueOf(commonServiceList.get(i).get("request_content")));
+					array.add(map);
+				}
+				model.put("commonServiceList", GsonUtil.toJson(array));
+			}
 		} else {
 			model.put("welcomeMsg", "Sorry,Master,About \"" + request.getContent()
 					+ "\",I don't know too much yet,but I can provide you with the following help:");
 			model.put("assistantList", getAssistantMap());
 		}
-
 		return response(model, "main");
 	}
 
@@ -113,7 +123,7 @@ public class MainAssistant extends BaseAssistant {
 	private Assistant assignAssistant(BaseRequest baseRequest) {
 		Assistant assistant = this;
 		try {
-			if (baseRequest.getAssistantType() != AssistantType.MAIN_ASSISTANT) {
+			if (baseRequest.getOriginAssistantType() != AssistantType.MAIN_ASSISTANT) {
 				Class<?> assistantType = Class.forName(baseRequest.getAssistantType().getValue());
 				assistant = (Assistant) assistantType.newInstance();
 			} else {
@@ -121,9 +131,10 @@ public class MainAssistant extends BaseAssistant {
 				if (assistantByRelatedWordList != null && assistantByRelatedWordList.size() > 0) {
 					for (Map<String, Object> entity : assistantByRelatedWordList) {
 						if (entity.get("associated_word").equals(baseRequest.getContent())) {
-							Class<?> assistantType = Class
-									.forName(AssistantType.fromCode(entity.get("assistant_id").toString()).getValue());
-							assistant = (Assistant) assistantType.newInstance();
+							AssistantType assistantType = AssistantType.fromCode(entity.get("assistant_id").toString());
+							Class<?> assistantClass = Class.forName(assistantType.getValue());
+							baseRequest.setAssistantType(assistantType);
+							assistant = (Assistant) assistantClass.newInstance();
 							break;
 						}
 					}

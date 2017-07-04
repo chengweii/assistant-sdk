@@ -65,7 +65,7 @@ public class ScheduleAssistant extends BaseAssistant {
 		model.put("taskValue", taskType.getValue());
 		List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
 
-		if (task.items != null && task.items.size() > 0) {
+		if (task != null && task.items != null && task.items.size() > 0) {
 			for (Item item : task.items) {
 				Map<String, Object> entity = new HashMap<String, Object>();
 				entity.put("id", item.id);

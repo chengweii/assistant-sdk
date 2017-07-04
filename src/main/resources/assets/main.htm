@@ -5,22 +5,31 @@
 			<h3>${welcomeMsg}</h3>
 		</div>
 		<div id="goal-list-key" class="listview narrow">
-			<% for(item in assistantList){ %>
-			<div class="media">
-				<div class="pull-right">
-					<div class="counts">
-					<% for(word in item.related_word_list){ %>
-					${word.associated_word}
-					<%}%>
+			<% if(has(assistantList)){
+				for(item in assistantList){ %>
+				<div class="media">
+					<div class="pull-right">
+						<div class="counts">
+						<% for(word in item.related_word_list){ %>
+						${word.associated_word}
+						<%}%>
+						</div>
+					</div>
+					<div class="media-body">
+						<h6>${item.assistant_name}</h6>
 					</div>
 				</div>
-				<div class="media-body">
-					<h6>${item.assistant_name}</h6>
-				</div>
-			</div>
-			<%}%>
+			<%	}}%>
 		</div>
 	</div>
 	<div class="clearfix"></div>
 </div>
+
+<script>
+<% if(has(commonServiceList)){ %>
+var commonServiceList=${commonServiceList};
+assistant.requestDataBatch(commonServiceList);
+<% } %>
+</script>
+
 </div>

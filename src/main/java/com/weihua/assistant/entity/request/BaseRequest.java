@@ -11,6 +11,8 @@ public class BaseRequest implements Request {
 
 	private OriginType originType;
 
+	private AssistantType originAssistantType;
+	
 	private AssistantType assistantType;
 
 	private Boolean isLocationPath;
@@ -29,7 +31,7 @@ public class BaseRequest implements Request {
 		RequestData requestData = GsonUtil.getEntityFromJson(request, new TypeToken<RequestData>() {
 		});
 		if (requestData != null) {
-			this.assistantType = AssistantType.fromCode(requestData.assistantType);
+			this.originAssistantType = AssistantType.fromCode(requestData.assistantType);
 			this.originType = OriginType.fromCode(requestData.originType);
 			this.isLocationPath = requestData.isLocationPath;
 			this.requestContent = requestData.requestContent;
@@ -47,11 +49,19 @@ public class BaseRequest implements Request {
 	}
 
 	public AssistantType getAssistantType() {
-		return this.assistantType;
+		return assistantType;
 	}
 
-	public void getAssistantType(AssistantType assistantType) {
+	public void setAssistantType(AssistantType assistantType) {
 		this.assistantType = assistantType;
+	}
+
+	public AssistantType getOriginAssistantType() {
+		return originAssistantType;
+	}
+
+	public void setOriginAssistantType(AssistantType originAssistantType) {
+		this.originAssistantType = originAssistantType;
 	}
 
 	public OriginType getOriginType() {

@@ -41,7 +41,7 @@ public class MainDaoImpl extends BaseDao implements MainDao {
 
 	@Override
 	public List<Map<String, Object>> findAssistantHistory(Integer topCount) {
-		String sql = "select * from assistant_history order by create_time desc limit ?";
+		String sql = "select distinct assistant_id,request_content from (select * from assistant_history t where t.assistant_id != '111' and t.service_type='1' order by create_time desc) order by create_time desc limit ?";
 		List<Map<String, Object>> result = dBHelper.queryMapList(LOGGER, sql, topCount);
 		return result;
 	}

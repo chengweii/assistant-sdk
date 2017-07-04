@@ -37,9 +37,11 @@ public class DidaListUtil {
 		if (taskType == TaskType.FUTURE_TRIFLES || taskType == TaskType.FUTURE_WORK) {
 			taskTitle = taskType.getCode();
 		}
-		for (Task task : taskList) {
-			if (taskTitle.equals(task.title)) {
-				return task;
+		if (CollectionUtil.isNotEmpty(taskList)) {
+			for (Task task : taskList) {
+				if (taskTitle.equals(task.title)) {
+					return task;
+				}
 			}
 		}
 
