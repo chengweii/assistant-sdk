@@ -104,6 +104,7 @@ public class MainAssistant extends BaseAssistant {
 				baseRequest = new BaseRequest(item.get("request_content").toString());
 				baseRequest.setOriginType(request.getOriginType());
 				baseRequest.setExtraInfo(item.get("time_config").toString());
+				baseRequest.setAssistantType(baseRequest.getOriginAssistantType());
 				response = assistant.getResponse(baseRequest);
 				if (response != null) {
 					if (response.getContent() != null) {

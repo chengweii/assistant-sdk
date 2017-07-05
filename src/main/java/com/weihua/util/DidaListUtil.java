@@ -33,9 +33,9 @@ public class DidaListUtil {
 	public static Task getTaskListFromDida365(TaskType taskType) throws Exception {
 
 		List<Task> taskList = getTaskListFromDida365();
-		String taskTitle = DateUtil.getDateFormat(new Date(), "yyyyMMdd") + taskType.getCode();
-		if (taskType == TaskType.FUTURE_TRIFLES || taskType == TaskType.FUTURE_WORK) {
-			taskTitle = taskType.getCode();
+		String taskTitle = taskType.getCode();
+		if (taskType == TaskType.CURRENT_TRIFLES || taskType == TaskType.CURRENT_WORK) {
+			taskTitle = DateUtil.getDateFormat(new Date(), "yyyyMMdd") + taskType.getCode();
 		}
 		if (CollectionUtil.isNotEmpty(taskList)) {
 			for (Task task : taskList) {
@@ -137,8 +137,11 @@ public class DidaListUtil {
 	}
 
 	public static enum TaskType {
-		CURRENT_TRIFLES("CurrentTrifles", "当前琐事"), CURRENT_WORK("CurrentWork", "当前工作"), FUTURE_TRIFLES("FutureTrifles",
-				"未来琐事"), FUTURE_WORK("FutureWork", "未来工作");
+		CURRENT_TRIFLES("CurrentTrifles", "当前琐事"), 
+		CURRENT_WORK("CurrentWork", "当前工作"), 
+		FUTURE_TRIFLES("FutureTrifles", "未来琐事"), 
+		FUTURE_WORK("FutureWork", "未来工作"), 
+		TECHNICAL_STUDY("TechnicalStudy", "技术研究");
 
 		private TaskType(String code, String value) {
 			this.code = code;
