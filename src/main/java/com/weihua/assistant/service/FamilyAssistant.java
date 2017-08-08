@@ -8,6 +8,9 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 
+import com.google.common.base.MoreObjects;
+import com.google.common.base.Strings;
+import com.weihua.assistant.constant.AssistantConstant;
 import com.weihua.assistant.constant.OriginType;
 import com.weihua.assistant.context.Context;
 import com.weihua.assistant.context.Context.HistoryRecord;
@@ -30,8 +33,11 @@ import com.weihua.util.EmailUtil;
 import com.weihua.util.EmailUtil.SendEmailInfo;
 import com.weihua.util.ExceptionUtil;
 import com.weihua.util.GsonUtil;
-import com.weihua.util.StringUtil;
 
+/**
+ * @author chengwei2
+ * @category 家庭
+ */
 public class FamilyAssistant extends BaseAssistant {
 
 	private static Logger LOGGER = Logger.getLogger(FamilyAssistant.class);
@@ -60,15 +66,9 @@ public class FamilyAssistant extends BaseAssistant {
 
 	@ServiceLocation(value = "getRecordListByWord")
 	public Response getRecordListByWord(BaseRequest request) {
-		String extraInfo = request.getExtraInfo();
-		Map<String, String> extraInfoMap = GsonUtil.getMapFromJson(extraInfo);
-		String word = null;
-		if (extraInfoMap != null && !StringUtil.isEmpty(extraInfoMap.get("word"))) {
-			word = extraInfoMap.get("word");
-		}
-		List<Map<String, Object>> result = null;
-		if (word != null)
-			result = familyDao.findRecordListByWord(word);
+		Map<String, String> extraInfoMap = GsonUtil.getMapFromJson(request.getExtraInfo());
+		String word = Strings.nullToEmpty(extraInfoMap == null ? null : extraInfoMap.get("word"));
+		List<Map<String, Object>> result = familyDao.findRecordListByWord(word);
 
 		Map<String, Object> model = new HashMap<String, Object>();
 
@@ -107,18 +107,13 @@ public class FamilyAssistant extends BaseAssistant {
 
 	@ServiceLocation(value = "saveRecord")
 	public Response saveRecord(BaseRequest request) {
-		String extraInfo = request.getExtraInfo();
-		Map<String, String> extraInfoMap = GsonUtil.getMapFromJson(extraInfo);
-		String typeName = extraInfoMap.get("typeName") != null ? String.valueOf(extraInfoMap.get("typeName")) : "";
-		String recordTime = extraInfoMap.get("recordTime") != null ? String.valueOf(extraInfoMap.get("recordTime"))
-				: "";
-		String recordTitle = extraInfoMap.get("recordTitle") != null ? String.valueOf(extraInfoMap.get("recordTitle"))
-				: "";
-		String recordContent = extraInfoMap.get("recordContent") != null
-				? String.valueOf(extraInfoMap.get("recordContent")) : "";
-		String optimization = extraInfoMap.get("optimization") != null
-				? String.valueOf(extraInfoMap.get("optimization")) : "";
-		int recordId = extraInfoMap.get("recordId") != null ? Integer.valueOf(extraInfoMap.get("recordId")) : 0;
+		Map<String, String> extraInfoMap = GsonUtil.getMapFromJson(request.getExtraInfo());
+		String typeName = MoreObjects.firstNonNull(extraInfoMap.get("typeName"), "");
+		String recordTime = MoreObjects.firstNonNull(extraInfoMap.get("recordTime"), "");
+		String recordTitle = MoreObjects.firstNonNull(extraInfoMap.get("recordTitle"), "");
+		String recordContent = MoreObjects.firstNonNull(extraInfoMap.get("recordContent"), "");
+		String optimization = MoreObjects.firstNonNull(extraInfoMap.get("optimization"), "");
+		int recordId = Integer.valueOf(MoreObjects.firstNonNull(extraInfoMap.get("recordId"), "0"));
 
 		int result = 0;
 		if (recordId == 0) {
@@ -130,7 +125,8 @@ public class FamilyAssistant extends BaseAssistant {
 		Map<String, Object> model = new HashMap<String, Object>();
 
 		model.put("status", result > 0 ? 1 : 0);
-		model.put("msg", result > 0 ? "Ok,save succeed." : "Sorry,save failed.");
+		model.put("msg",
+				result > 0 ? AssistantConstant.FAMILY_ASSISTANT_STRING_1 : AssistantConstant.FAMILY_ASSISTANT_STRING_2);
 		return responseJson(model);
 	}
 
@@ -150,13 +146,13 @@ public class FamilyAssistant extends BaseAssistant {
 		Map<String, Object> model = new HashMap<String, Object>();
 		if (currentTime.equals(morningRemindTime) && isNotReminded(morningRemindTime, request)) {
 			bindTriflesModel(model, "00:00", "11:59", "morning.jpeg");
-			return sendEmail(model, "早上好，这是您上午的日程清单，请查收。");
+			return sendEmail(model, AssistantConstant.FAMILY_ASSISTANT_STRING_3);
 		} else if (currentTime.equals(afternoonRemindTime) && isNotReminded(afternoonRemindTime, request)) {
 			bindTriflesModel(model, "12:00", "18:59", "afternoon.jpeg");
-			return sendEmail(model, "中午好，这是您下午的日程清单，请查收。");
+			return sendEmail(model, AssistantConstant.FAMILY_ASSISTANT_STRING_4);
 		} else if (currentTime.equals(nightRemindTime) && isNotReminded(nightRemindTime, request)) {
 			bindTriflesModel(model, "19:00", "23:59", "night.jpeg");
-			return sendEmail(model, "晚上好，这是您晚上的日程清单，请查收。");
+			return sendEmail(model, AssistantConstant.FAMILY_ASSISTANT_STRING_5);
 		}
 
 		return null;
@@ -165,7 +161,7 @@ public class FamilyAssistant extends BaseAssistant {
 	private void bindTriflesModel(Map<String, Object> model, String timeBegin, String timeEnd, String bannerImage) {
 		boolean isHoliday = holidayArrangementDao.findIsHoliday(DateUtil.getDateFormat(new Date()));
 		List<Map<String, Object>> result = familyDao.findRecordListByTime(timeBegin, timeEnd,
-				isHoliday ? "休息日" : "工作日");
+				isHoliday ? AssistantConstant.FAMILY_ASSISTANT_STRING_6 : AssistantConstant.FAMILY_ASSISTANT_STRING_7);
 		model.put("recordList", result);
 		model.put("taskList", getScheduleTask());
 		model.put("bannerImage", bannerImage);
@@ -181,18 +177,18 @@ public class FamilyAssistant extends BaseAssistant {
 			if (task != null && task.items != null && task.items.size() > 0) {
 				for (Item item : task.items) {
 					Map<String, Object> map = new HashMap<String, Object>();
-					map.put("record_time", "--:--");
-					map.put("type_name", "日程");
+					map.put("record_time", AssistantConstant.FAMILY_ASSISTANT_STRING_11);
+					map.put("type_name", AssistantConstant.FAMILY_ASSISTANT_STRING_8);
 					map.put("record_title", item.title);
 					map.put("optimization", "");
 					result.add(map);
 				}
 			} else {
 				Map<String, Object> map = new HashMap<String, Object>();
-				map.put("record_time", "--:--");
-				map.put("type_name", "日程");
-				map.put("record_title", "未安排");
-				map.put("optimization", "无事可做是最大的悲哀。");
+				map.put("record_time", AssistantConstant.FAMILY_ASSISTANT_STRING_11);
+				map.put("type_name", AssistantConstant.FAMILY_ASSISTANT_STRING_8);
+				map.put("record_title", AssistantConstant.FAMILY_ASSISTANT_STRING_9);
+				map.put("optimization", AssistantConstant.FAMILY_ASSISTANT_STRING_10);
 				result.add(map);
 			}
 		} catch (Exception e) {

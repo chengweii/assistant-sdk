@@ -15,6 +15,10 @@ import com.weihua.database.dao.impl.InterviewDaoImpl;
 import com.weihua.util.ExceptionUtil;
 import com.weihua.util.GsonUtil;
 
+/**
+ * @author chengwei2
+ * @category 面试
+ */
 public class InterviewAssistant extends BaseAssistant {
 
 	private static Logger LOGGER = Logger.getLogger(InterviewAssistant.class);

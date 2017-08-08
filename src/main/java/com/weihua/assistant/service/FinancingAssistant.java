@@ -23,6 +23,10 @@ import com.weihua.util.ExceptionUtil;
 import com.weihua.util.GsonUtil;
 import com.weihua.util.HttpUtil;
 
+/**
+ * @author chengwei2
+ * @category 财务
+ */
 public class FinancingAssistant extends BaseAssistant {
 
 	private static final Logger LOGGER = Logger.getLogger(FinancingAssistant.class);

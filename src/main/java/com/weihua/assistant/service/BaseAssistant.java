@@ -2,18 +2,24 @@ package com.weihua.assistant.service;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.apache.log4j.Logger;
 
 import com.weihua.assistant.constant.AssistantType;
 import com.weihua.assistant.entity.request.BaseRequest;
 import com.weihua.assistant.entity.response.BaseResponse;
 import com.weihua.assistant.entity.response.Response;
 import com.weihua.assistant.service.annotation.ServiceLocation;
+import com.weihua.util.ExceptionUtil;
 import com.weihua.util.GsonUtil;
 import com.weihua.util.TemplateUtil;
 
 public abstract class BaseAssistant implements Assistant {
+
+	private static Logger LOGGER = Logger.getLogger(BaseAssistant.class);
 
 	private static final String TEMPLATE_SUFFIX = ".htm";
 
@@ -25,7 +31,9 @@ public abstract class BaseAssistant implements Assistant {
 
 	private static final String ASSISTANT_TITLE = "assistantTitle";
 
-	private static List<Map<String, Object>> assistantList = null;
+	private static List<Map<String, Object>> assistantNameList = null;
+
+	private static Map<String, Assistant> assistantCache = new HashMap<String, Assistant>();
 
 	protected Response response(Map<String, Object> model, String templatePath) {
 		bindCommonInfo(model);
@@ -89,8 +97,8 @@ public abstract class BaseAssistant implements Assistant {
 	}
 
 	private String getAssistantNameFromAssistantMap(String code) {
-		if (assistantList != null) {
-			for (Map<String, Object> item : assistantList) {
+		if (assistantNameList != null) {
+			for (Map<String, Object> item : assistantNameList) {
 				if (code.equals(String.valueOf(item.get("id")))) {
 					return String.valueOf(item.get("assistant_name"));
 				}
@@ -99,12 +107,32 @@ public abstract class BaseAssistant implements Assistant {
 		return "";
 	}
 
+	protected static Assistant getAssistantByAssistantType(String assistantTypeName) {
+		try {
+			if (assistantCache.containsKey(assistantTypeName)) {
+				return assistantCache.get(assistantTypeName);
+			} else {
+				Class<?> assistantType = Class.forName(assistantTypeName);
+				Assistant assistant = (Assistant) assistantType.newInstance();
+				synchronized (assistantCache) {
+					if (!assistantCache.containsKey(assistantTypeName)) {
+						assistantCache.put(assistantTypeName, assistant);
+					}
+				}
+				return assistant;
+			}
+		} catch (Exception e) {
+			ExceptionUtil.propagate(LOGGER, e);
+		}
+		return null;
+	}
+
 	protected static void setAssistantMap(List<Map<String, Object>> assistantList) {
-		BaseAssistant.assistantList = assistantList;
+		BaseAssistant.assistantNameList = assistantList;
 	}
 
 	protected static List<Map<String, Object>> getAssistantMap() {
-		return BaseAssistant.assistantList;
+		return BaseAssistant.assistantNameList;
 	}
 
 	protected Response invokeLocationMethod(BaseRequest request)

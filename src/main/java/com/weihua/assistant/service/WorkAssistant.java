@@ -3,6 +3,10 @@ package com.weihua.assistant.service;
 import com.weihua.assistant.entity.request.Request;
 import com.weihua.assistant.entity.response.Response;
 
+/**
+ * @author chengwei2
+ * @category 工作
+ */
 public class WorkAssistant extends BaseAssistant {
 
 	@Override

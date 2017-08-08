@@ -12,6 +12,10 @@ import com.weihua.assistant.service.annotation.ServiceLocation;
 import com.weihua.util.ExceptionUtil;
 import com.weihua.util.GsonUtil;
 
+/**
+ * @author chengwei2
+ * @category 知识库
+ */
 public class KnowledgeBaseAssistant extends BaseAssistant {
 
 	private static Logger LOGGER = Logger.getLogger(KnowledgeBaseAssistant.class);

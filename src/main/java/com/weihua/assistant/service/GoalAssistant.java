@@ -15,6 +15,10 @@ import com.weihua.database.dao.impl.GoalDaoImpl;
 import com.weihua.util.ExceptionUtil;
 import com.weihua.util.GsonUtil;
 
+/**
+ * @author chengwei2
+ * @category 目标规划
+ */
 public class GoalAssistant extends BaseAssistant {
 
 	private static Logger LOGGER = Logger.getLogger(InterviewAssistant.class);

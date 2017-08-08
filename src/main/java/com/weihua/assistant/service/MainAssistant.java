@@ -1,5 +1,6 @@
 package com.weihua.assistant.service;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -7,6 +8,7 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 
+import com.weihua.assistant.constant.AssistantConstant;
 import com.weihua.assistant.constant.AssistantType;
 import com.weihua.assistant.constant.ServiceType;
 import com.weihua.assistant.context.Context;
@@ -21,6 +23,10 @@ import com.weihua.util.CollectionUtil;
 import com.weihua.util.ExceptionUtil;
 import com.weihua.util.GsonUtil;
 
+/**
+ * @author chengwei2
+ * @category 核心助手
+ */
 public class MainAssistant extends BaseAssistant {
 	private static Logger LOGGER = Logger.getLogger(MainAssistant.class);
 
@@ -28,6 +34,10 @@ public class MainAssistant extends BaseAssistant {
 
 	static {
 		setAssistantMap(mainDao.findAssistantList());
+	}
+
+	public static MainAssistant getInstance() {
+		return (MainAssistant) getAssistantByAssistantType(AssistantType.MAIN_ASSISTANT.getValue());
 	}
 
 	public String execute(String request) {
@@ -67,7 +77,7 @@ public class MainAssistant extends BaseAssistant {
 		Map<String, Object> model = new HashMap<String, Object>();
 		if (request.getContent() == null || request.getContent().equals("")
 				|| request.getContent().equals("MyAssistant")) {
-			model.put("welcomeMsg", "Hello,Master,What can I do for you?");
+			model.put("welcomeMsg", AssistantConstant.MAIN_ASSISTANT_STRING_1);
 			List<Map<String, Object>> commonServiceList = mainDao.findAssistantHistory(3);
 			if (CollectionUtil.isNotEmpty(commonServiceList)) {
 				List<Map<String, String>> array = new ArrayList<Map<String, String>>();
@@ -79,8 +89,8 @@ public class MainAssistant extends BaseAssistant {
 				model.put("commonServiceList", GsonUtil.toJson(array));
 			}
 		} else {
-			model.put("welcomeMsg", "Sorry,Master,About \"" + request.getContent()
-					+ "\",I don't know too much yet,but I can provide you with the following help:");
+			model.put("welcomeMsg",
+					MessageFormat.format(AssistantConstant.MAIN_ASSISTANT_STRING_2, request.getContent()));
 			model.put("assistantList", getAssistantMap());
 		}
 		return response(model, "main");
@@ -126,18 +136,16 @@ public class MainAssistant extends BaseAssistant {
 		Assistant assistant = this;
 		try {
 			if (baseRequest.getOriginAssistantType() != AssistantType.MAIN_ASSISTANT) {
-				Class<?> assistantType = Class.forName(baseRequest.getOriginAssistantType().getValue());
 				baseRequest.setAssistantType(baseRequest.getOriginAssistantType());
-				assistant = (Assistant) assistantType.newInstance();
+				assistant = getAssistantByAssistantType(baseRequest.getOriginAssistantType().getValue());
 			} else {
 				List<Map<String, Object>> assistantByRelatedWordList = mainDao.findAssistantByRelatedWordList();
 				if (assistantByRelatedWordList != null && assistantByRelatedWordList.size() > 0) {
 					for (Map<String, Object> entity : assistantByRelatedWordList) {
 						if (entity.get("associated_word").equals(baseRequest.getContent())) {
 							AssistantType assistantType = AssistantType.fromCode(entity.get("assistant_id").toString());
-							Class<?> assistantClass = Class.forName(assistantType.getValue());
 							baseRequest.setAssistantType(assistantType);
-							assistant = (Assistant) assistantClass.newInstance();
+							assistant = getAssistantByAssistantType(assistantType.getValue());
 							break;
 						}
 					}

@@ -19,6 +19,10 @@ import com.weihua.util.DidaListUtil.TaskType;
 import com.weihua.util.ExceptionUtil;
 import com.weihua.util.GsonUtil;
 
+/**
+ * @author chengwei2
+ * @category 日程
+ */
 public class ScheduleAssistant extends BaseAssistant {
 
 	private static Logger LOGGER = Logger.getLogger(ScheduleAssistant.class);

@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 
+import com.google.common.base.Strings;
 import com.weihua.database.dao.FamilyDao;
 
 public class FamilyDaoImpl extends BaseDao implements FamilyDao {
@@ -13,8 +14,14 @@ public class FamilyDaoImpl extends BaseDao implements FamilyDao {
 
 	@Override
 	public List<Map<String, Object>> findRecordListByWord(String word) {
-		String sql = "select * from life_record where record_title like ?";
-		List<Map<String, Object>> result = dBHelper.queryMapList(LOGGER, sql, "%" + word + "%");
+		String sql = "select * from life_record ";
+		List<Map<String, Object>> result = null;
+		if (!Strings.isNullOrEmpty(word)) {
+			sql = sql + " where record_title like ? ";
+			result = dBHelper.queryMapList(LOGGER, sql, "%" + word + "%");
+		} else {
+			result = dBHelper.queryMapList(LOGGER, sql);
+		}
 		return result;
 	}
 
