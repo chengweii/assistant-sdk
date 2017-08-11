@@ -87,8 +87,21 @@ public class EmailUtil {
 			String nickName = javax.mail.internet.MimeUtility.encodeText(sendEmailInfo.getSendNickName());
 			InternetAddress from = new InternetAddress(nickName + " <" + sendEmailInfo.getSendUser() + ">");
 			message.setFrom(from);
-			InternetAddress to = new InternetAddress(sendEmailInfo.getReceiveUser());
-			message.setRecipient(Message.RecipientType.TO, to);
+
+			if (sendEmailInfo.getReceiveUser() != null && sendEmailInfo.getReceiveUser().contains(";")) {
+				String[] receiveUsers = sendEmailInfo.getReceiveUser().split(";");
+				InternetAddress[] to = new InternetAddress[receiveUsers.length];
+				int i = 0;
+				for (String receiveUser : receiveUsers) {
+					to[i] = new InternetAddress(receiveUser);
+					i++;
+				}
+				message.setRecipients(Message.RecipientType.TO, to);
+			} else {
+				InternetAddress to = new InternetAddress(sendEmailInfo.getReceiveUser());
+				message.setRecipient(Message.RecipientType.TO, to);
+			}
+
 			message.setSubject(sendEmailInfo.getHeadName());
 			String content = sendEmailInfo.getSendHtml().toString();
 			message.setContent(content, "text/html;charset=GBK");
@@ -525,24 +538,31 @@ public class EmailUtil {
 
 	public static void main(String[] args) {
 
-		/*SendEmailInfo info = new SendEmailInfo();
-		info.setSendUser("erwerw@163.com");
-		info.setSendUname("erwerw");
-		info.setSendNickName("数据同步助手");
-		info.setSendPwd("erwerw");
-		info.setReceiveUser("erwerw@163.com");
+		/*
+		 * SendEmailInfo info = new SendEmailInfo();
+		 * info.setSendUser("erwerw@163.com"); info.setSendUname("erwerw");
+		 * info.setSendNickName("数据同步助手"); info.setSendPwd("erwerw");
+		 * info.setReceiveUser("erwerw@163.com");
+		 * info.setHeadName("family_assistant_data_sync_" +
+		 * DateUtil.getDateFormat(new Date()));
+		 * info.setSendHtml(GsonUtil.toJson(info));
+		 * 
+		 * EmailUtil.sendEmail(info);
+		 */
+
+		/*
+		 * ReceiveEmailInfo rinfo = new ReceiveEmailInfo();
+		 * rinfo.setUserName("12312@163.com"); rinfo.setPassWord("123123");
+		 * rinfo.setSenderFilter("123123@163.com"); rinfo.setDelete(false);
+		 * 
+		 * EmailUtil.receiveMail(rinfo);
+		 */
+
+		initDefaultEmailAccountInfo("sync_18301166408@163.com", "chengwei123", "sync_18301166408@163.com", null);
+		SendEmailInfo info = new SendEmailInfo();
+		info.setReceiveUser("18301166408@163.com;295999757@qq.com");
 		info.setHeadName("family_assistant_data_sync_" + DateUtil.getDateFormat(new Date()));
 		info.setSendHtml(GsonUtil.toJson(info));
-
-		EmailUtil.sendEmail(info);*/
-
-		ReceiveEmailInfo rinfo = new ReceiveEmailInfo();
-		rinfo.setUserName("12312@163.com");
-		rinfo.setPassWord("123123");
-		rinfo.setSenderFilter("123123@163.com");
-		rinfo.setDelete(false);
-
-		EmailUtil.receiveMail(rinfo);
-
+		sendEmail(info);
 	}
 }
