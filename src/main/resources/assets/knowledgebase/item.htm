@@ -1,15 +1,67 @@
 <div class="col-md-12 ${assistantName}-container" animate="true">
 
-	<div class="tile">
-		<h2 class="tile-title">${assistantTitle}</h2>
-		<div class="tile-body-50 p-10">
-			<iframe style="height:100%;width:100%;" src="http://player.youku.com/embed/XMjczNzEyODg3Ng==" frameborder=0 'allowfullscreen'></iframe>
-		</div>
-		<div class="clearfix"></div>
-	</div>
+    <div class="tile">
+        <h2 class="tile-title">${assistantTitle}</h2>
+        <div class="tile-body h-pc-30 p-0">
+            <div class="col-md-9 p-0">
+                <div class="tile m-b-0">
+                    <div class="tile-body h-pc-30 p-0">
+                        <div class="col-sm-12 h-pe-60 p-0" style="background: rgba(0, 0, 0, 1) !important;">
+                            <div style="height:98%;width:60%;margin:0 auto;">
+                                <iframe style="height:100%;width:100%;" src="http://player.youku.com/embed/XMjczNzEyODg3Ng==" frameborder=0
+                                    'allowfullscreen'></iframe>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 h-pe-40 p-0">
+                            <div class="accordion tile m-b-0">
+                                <div class="panel-group block m-b-0" id="accordion">
+                                    <div class="panel panel-default">
+                                        <div class="panel-heading">
+                                            <h3 class="panel-title">
+                                                <a class="accordion-toggle collapsed active" data-toggle="collapse" data-parent="#accordion" href="#collapseThree">
+                                    Collapsible Group Item #3
+                                </a>
+                                            </h3>
+                                        </div>
+                                        <div id="collapseThree" class="panel-collapse collapse" style="height: 0px;">
+                                            <div class="panel-body h-pc-10">
+                                            Collapsible Group ItemCollapsible Group ItemCollapsible Group Item
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-3 p-0">
+                <div class="tile m-b-0">
+                    <div class="tile-body h-pc-30 p-0">
+                        <div class="listview narrow sortable ui-sortable">
+                            <div class="media p-l-5">
+                                <div class="media-body">
+                                    <small class="text-muted">Lession 1</small><br>
+                                    <a class="t-overflow" href="">Cras molestie fermentum </a>
+                                </div>
+                            </div>
+                            <div class="media p-l-5">
+                                <div class="media-body">
+                                    <small class="text-muted">Lession 2</small><br>
+                                    <a class="t-overflow" href="">Nibh, ac semper</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="clearfix"></div>
+    </div>
 
-	<script>
-		assistant.keepAssistantContainerUnique('${assistantName}-container');
-	</script>
+    <script>
+    assistant.keepAssistantContainerUnique('${assistantName}-container');
+    </script>
 
 </div>
