@@ -2,6 +2,7 @@ package com.weihua.assistant.service;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,10 +10,14 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 
 import com.weihua.assistant.constant.AssistantType;
+import com.weihua.assistant.constant.OriginType;
+import com.weihua.assistant.context.Context;
+import com.weihua.assistant.context.Context.HistoryRecord;
 import com.weihua.assistant.entity.request.BaseRequest;
 import com.weihua.assistant.entity.response.BaseResponse;
 import com.weihua.assistant.entity.response.Response;
 import com.weihua.assistant.service.annotation.ServiceLocation;
+import com.weihua.util.DateUtil;
 import com.weihua.util.ExceptionUtil;
 import com.weihua.util.GsonUtil;
 import com.weihua.util.TemplateUtil;
@@ -144,5 +149,54 @@ public abstract class BaseAssistant implements Assistant {
 			}
 		}
 		return null;
+	}
+
+	protected static boolean isTriggerServiceReminding(ServiceTriggerPeriod serviceTriggerPeriod, String remindTime,
+			BaseRequest request) {
+
+		if (ServiceTriggerPeriod.DAY == serviceTriggerPeriod) {
+			String currentTime = DateUtil.getDateFormat(new Date(), "HH:mm");
+			if (currentTime.equals(remindTime)) {
+				HistoryRecord lastHistoryRecord = Context.findLastBackAssistantHistory(request.getAssistantType(),
+						request.getOriginRequest());
+				return lastHistoryRecord == null
+						|| !remindTime.equals(DateUtil.getDateFormat(lastHistoryRecord.getCreateTime(), "HH:mm"));
+			}
+		} else if (ServiceTriggerPeriod.SECOND == serviceTriggerPeriod) {
+			HistoryRecord lastHistoryRecord = Context.findLastBackAssistantHistory(request.getAssistantType(),
+					request.getOriginRequest());
+			return lastHistoryRecord == null || DateUtil.getDateDiff(DateUtil.getNowDateTime(),
+					lastHistoryRecord.getCreateTime()) > Long.valueOf(remindTime);
+		}
+
+		return false;
+
+	}
+
+	protected enum ServiceTriggerPeriod {
+		SECOND, DAY, WEEK, MONTH, SEASON, YEAR;
+		public static ServiceTriggerPeriod fromCode(String code) {
+			for (ServiceTriggerPeriod entity : ServiceTriggerPeriod.values()) {
+				if (String.valueOf(entity.ordinal()).equals(code)) {
+					return entity;
+				}
+			}
+			return null;
+		}
+	}
+
+	protected static ServiceRemindTimeConfig getServiceRemindTimeConfig(BaseRequest request) {
+		if (request.getOriginType() != OriginType.WEB)
+			return null;
+		ServiceRemindTimeConfig serviceRemindTimeConfig = new ServiceRemindTimeConfig();
+		Map<String, String> timeConfig = GsonUtil.getMapFromJson(request.getExtraInfo());
+		serviceRemindTimeConfig.serviceTriggerPeriod = ServiceTriggerPeriod.fromCode(timeConfig.get("triggerPeriod"));
+		serviceRemindTimeConfig.remindTimeConfig = timeConfig;
+		return serviceRemindTimeConfig;
+	}
+
+	protected static class ServiceRemindTimeConfig {
+		public ServiceTriggerPeriod serviceTriggerPeriod;
+		public Map<String, String> remindTimeConfig;
 	}
 }

@@ -11,17 +11,17 @@ import org.apache.log4j.Logger;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Strings;
 import com.weihua.assistant.constant.AssistantConstant;
-import com.weihua.assistant.constant.OriginType;
-import com.weihua.assistant.context.Context;
-import com.weihua.assistant.context.Context.HistoryRecord;
+import com.weihua.assistant.constant.FoodType;
 import com.weihua.assistant.entity.request.BaseRequest;
 import com.weihua.assistant.entity.request.Request;
 import com.weihua.assistant.entity.response.Response;
 import com.weihua.assistant.service.annotation.ServiceLocation;
 import com.weihua.database.dao.FamilyDao;
+import com.weihua.database.dao.FoodListDao;
 import com.weihua.database.dao.HolidayArrangementDao;
 import com.weihua.database.dao.LifeMotoDao;
 import com.weihua.database.dao.impl.FamilyDaoImpl;
+import com.weihua.database.dao.impl.FoodListDaoImpl;
 import com.weihua.database.dao.impl.HolidayArrangementDaoImpl;
 import com.weihua.database.dao.impl.LifeMotoDaoImpl;
 import com.weihua.util.DateUtil;
@@ -47,6 +47,8 @@ public class FamilyAssistant extends BaseAssistant {
 	private static LifeMotoDao lifeMotoDao = new LifeMotoDaoImpl();
 
 	private static HolidayArrangementDao holidayArrangementDao = new HolidayArrangementDaoImpl();
+
+	private static FoodListDao foodListDao = new FoodListDaoImpl();
 
 	@Override
 	public Response getResponse(Request request) {
@@ -132,41 +134,55 @@ public class FamilyAssistant extends BaseAssistant {
 
 	@ServiceLocation(value = "getTriflesByTime")
 	public Response getTriflesByTime(BaseRequest request) {
-		if (request.getOriginType() != OriginType.WEB)
+		return null;
+	}
+
+	@ServiceLocation(value = "getHourseWorkByTime")
+	public Response getHourseWorkByTime(BaseRequest request) {
+		ServiceRemindTimeConfig serviceRemindTimeConfig = getServiceRemindTimeConfig(request);
+		if (serviceRemindTimeConfig == null)
 			return null;
 
-		Map<String, String> timeConfig = GsonUtil.getMapFromJson(request.getExtraInfo());
-
-		String morningRemindTime = timeConfig.get("morningRemindTime");
-		String afternoonRemindTime = timeConfig.get("afternoonRemindTime");
-		String nightRemindTime = timeConfig.get("nightRemindTime");
-
-		String currentTime = DateUtil.getDateFormat(new Date(), "HH:mm");
+		String remindTime = serviceRemindTimeConfig.remindTimeConfig.get("remindTime");
 
 		Map<String, Object> model = new HashMap<String, Object>();
-		if (currentTime.equals(morningRemindTime) && isNotReminded(morningRemindTime, request)) {
-			bindTriflesModel(model, "00:00", "11:59", "morning.jpeg");
-			return sendEmail(model, AssistantConstant.FAMILY_ASSISTANT_STRING_3);
-		} else if (currentTime.equals(afternoonRemindTime) && isNotReminded(afternoonRemindTime, request)) {
-			bindTriflesModel(model, "12:00", "18:59", "afternoon.jpeg");
-			return sendEmail(model, AssistantConstant.FAMILY_ASSISTANT_STRING_4);
-		} else if (currentTime.equals(nightRemindTime) && isNotReminded(nightRemindTime, request)) {
-			bindTriflesModel(model, "19:00", "23:59", "night.jpeg");
-			return sendEmail(model, AssistantConstant.FAMILY_ASSISTANT_STRING_5);
+		if (isTriggerServiceReminding(ServiceTriggerPeriod.DAY, remindTime, request)) {
+			bindHourseWorkModel(model);
+
+			SendEmailInfo info = new SendEmailInfo();
+			info.setHeadName(AssistantConstant.FAMILY_ASSISTANT_STRING_12);
+			Response response = response(model, "family/housework");
+			info.setSendHtml(response.getContent());
+			EmailUtil.sendEmail(info);
+
+			return responseJson(null);
 		}
 
 		return null;
 	}
 
-	private void bindTriflesModel(Map<String, Object> model, String timeBegin, String timeEnd, String bannerImage) {
-		boolean isHoliday = holidayArrangementDao.findIsHoliday(DateUtil.getDateFormat(new Date()));
-		List<Map<String, Object>> result = familyDao.findRecordListByTime(timeBegin, timeEnd,
-				isHoliday ? AssistantConstant.FAMILY_ASSISTANT_STRING_6 : AssistantConstant.FAMILY_ASSISTANT_STRING_7);
-		model.put("recordList", result);
-		model.put("taskList", getScheduleTask());
-		model.put("bannerImage", bannerImage);
+	private void bindHourseWorkModel(Map<String, Object> model) {
+		model.put("title",
+				DateUtil.getDateFormat(new Date(), "yyyy-MM-dd") + AssistantConstant.FAMILY_ASSISTANT_STRING_13);
 		Map<String, Object> lifeMoto = lifeMotoDao.findRandomRecord();
 		model.put("lifeMoto", lifeMoto.get("moto"));
+
+		Map<String, Object> complementary = foodListDao.findRandomRecord(FoodType.COMPLEMENTARY);
+		model.put("complementary", complementary);
+
+		Map<String, Object> breakfast = foodListDao.findRandomRecord(FoodType.BREAKFAST);
+		model.put("breakfast", breakfast);
+
+		Map<String, Object> lunch = foodListDao.findRandomRecord(FoodType.LUNCH);
+		model.put("lunch", lunch);
+
+		Map<String, Object> dinner = foodListDao.findRandomRecord(FoodType.DINNER);
+		model.put("dinner", dinner);
+
+		boolean isHoliday = holidayArrangementDao.findIsHoliday(DateUtil.getDateFormat(new Date()));
+		List<Map<String, Object>> hourseWorkList = familyDao.findRecordListByTime("00:00", "23:59",
+				isHoliday ? AssistantConstant.FAMILY_ASSISTANT_STRING_6 : AssistantConstant.FAMILY_ASSISTANT_STRING_7);
+		model.put("hourseWorkList", hourseWorkList);
 	}
 
 	private List<Map<String, Object>> getScheduleTask() {
@@ -195,23 +211,6 @@ public class FamilyAssistant extends BaseAssistant {
 			LOGGER.error("Get task error:", e);
 		}
 		return result;
-	}
-
-	private Response sendEmail(Map<String, Object> model, String title) {
-		model.put("title", title);
-		SendEmailInfo info = new SendEmailInfo();
-		info.setHeadName(title);
-		Response response = response(model, "family/email");
-		info.setSendHtml(response.getContent());
-		EmailUtil.sendEmail(info);
-		return responseJson(null);
-	}
-
-	private boolean isNotReminded(String remindTime, BaseRequest request) {
-		HistoryRecord lastHistoryRecord = Context.findLastBackAssistantHistory(request.getAssistantType(),
-				request.getOriginRequest());
-		return lastHistoryRecord == null
-				|| !remindTime.equals(DateUtil.getDateFormat(lastHistoryRecord.getCreateTime(), "HH:mm"));
 	}
 
 }
