@@ -24,6 +24,7 @@ import com.weihua.database.dao.impl.FamilyDaoImpl;
 import com.weihua.database.dao.impl.FoodListDaoImpl;
 import com.weihua.database.dao.impl.HolidayArrangementDaoImpl;
 import com.weihua.database.dao.impl.LifeMotoDaoImpl;
+import com.weihua.util.ConfigUtil;
 import com.weihua.util.DateUtil;
 import com.weihua.util.DidaListUtil;
 import com.weihua.util.DidaListUtil.Task;
@@ -151,6 +152,8 @@ public class FamilyAssistant extends BaseAssistant {
 			bindHourseWorkModel(model);
 
 			SendEmailInfo info = new SendEmailInfo();
+			info.setReceiveUser(ConfigUtil.getProperties()
+					.get(AssistantConstant.FAMILY_ASSISTANT_EMAIL_HOURSEWORK_REMINDEMAILUSER));
 			info.setHeadName(AssistantConstant.FAMILY_ASSISTANT_STRING_12);
 			Response response = response(model, "family/housework");
 			info.setSendHtml(response.getContent());

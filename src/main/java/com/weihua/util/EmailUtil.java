@@ -89,7 +89,7 @@ public class EmailUtil {
 			message.setFrom(from);
 
 			if (sendEmailInfo.getReceiveUser() != null && sendEmailInfo.getReceiveUser().contains(";")) {
-				String[] receiveUsers = sendEmailInfo.getReceiveUser().split(";");
+				String[] receiveUsers = sendEmailInfo.getReceiveUser().replaceAll("[^0-9@a-zA-Z\\.\\;]*", "").split(";");
 				InternetAddress[] to = new InternetAddress[receiveUsers.length];
 				int i = 0;
 				for (String receiveUser : receiveUsers) {
@@ -560,7 +560,7 @@ public class EmailUtil {
 
 		initDefaultEmailAccountInfo("sync_18301166408@163.com", "chengwei123", "sync_18301166408@163.com", null);
 		SendEmailInfo info = new SendEmailInfo();
-		info.setReceiveUser("18301166408@163.com;295999757@qq.com");
+		info.setReceiveUser("295999757@qq.com;18301166408@163.com");
 		info.setHeadName("family_assistant_data_sync_" + DateUtil.getDateFormat(new Date()));
 		info.setSendHtml(GsonUtil.toJson(info));
 		sendEmail(info);
