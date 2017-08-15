@@ -300,10 +300,10 @@
             <singleline>今日家务</singleline></td>
         </tr>
         <!--end title-->
-        <% for(item in taskList){ %>
+        <% for(item in hourseWorkList){ %>
         <tr>
           <td  height="50" width="55" align="left" style="border-bottom:1px solid #EAEAEA;font-family:Open sans, Arial, Sans-serif; font-size:16px; color:#808E8E;line-height:16px;">
-            <a style="background-color: #FF646A;padding:5px;font-size: 16px;color:#ffffff;border-radius: 5px;margin-left:5px;margin-right:5px;">${item.record_time}</a></td>
+            <a style="background-color:${item.time_period_color};padding:5px;font-size: 13px;font-weight:bold;color:#ffffff;border-radius: 5px;margin-left:5px;margin-right:5px;">${item.record_time}</a></td>
 		  <td  height="50" align="left" style="border-bottom:1px solid #EAEAEA;font-family:Open sans, Arial, Sans-serif; font-size:16px; color:#808E8E;line-height:16px;">
             <p style="font-size:15px;margin-top:5px;margin-bottom:5px;">${item.record_title}</p>
 			<p style="font-size:12px;margin-top:0px;margin-bottom:5px;">${item.optimization}</p>

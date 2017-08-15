@@ -55,6 +55,10 @@ public class DateUtil {
 		return null;
 	}
 
+	public static void main(String[] args) throws Exception {
+		System.out.println(formatDate("08:00", "hh:mm"));
+	}
+
 	/**
 	 * 日期格式化yyyy-MM-dd
 	 * 
@@ -372,6 +376,82 @@ public class DateUtil {
 	 */
 	public static long getDateDiff(Date date1, Date date2) {
 		return (date1.getTime() - date2.getTime()) / 1000;
+	}
+
+	public static TimePeriod getTimePeriodByDate(Date date) {
+		double hour = Double.valueOf(date.getHours()) + Double.valueOf(date.getMinutes()) / 60d;
+		if (hour >= 5 && hour < 8) {
+			return TimePeriod.MORNING;
+		} else if (hour >= 8 && hour < 12) {
+			return TimePeriod.BEFORENOON;
+		} else if (hour >= 12 && hour < 13) {
+			return TimePeriod.NOON;
+		} else if (hour >= 13 && hour < 18) {
+			return TimePeriod.AFTERNOON;
+		} else if (hour >= 18 && hour < 21) {
+			return TimePeriod.NIGHT;
+		} else if (hour >= 21 || hour < 5) {
+			return TimePeriod.DEEPNIGHT;
+		}
+		return null;
+	}
+
+	public static enum TimePeriod {
+
+		/**
+		 * 早晨
+		 */
+		MORNING("MORNING", "早晨"),
+
+		/**
+		 * 上午
+		 */
+		BEFORENOON("BEFORENOON", "上午"),
+
+		/**
+		 * 中午
+		 */
+		NOON("NOON", "中午"),
+
+		/**
+		 * 下午
+		 */
+		AFTERNOON("AFTERNOON", "下午"),
+
+		/**
+		 * 晚上
+		 */
+		NIGHT("NIGHT", "晚上"),
+
+		/**
+		 * 深夜
+		 */
+		DEEPNIGHT("DEEPNIGHT", "深夜");
+
+		private TimePeriod(String code, String value) {
+			this.code = code;
+			this.value = value;
+		}
+
+		private String code;
+		private String value;
+
+		public String getCode() {
+			return code;
+		}
+
+		public String getValue() {
+			return value;
+		}
+
+		public static TimePeriod fromCode(String code) {
+			for (TimePeriod entity : TimePeriod.values()) {
+				if (entity.getCode().equals(code)) {
+					return entity;
+				}
+			}
+			return null;
+		}
 	}
 
 }

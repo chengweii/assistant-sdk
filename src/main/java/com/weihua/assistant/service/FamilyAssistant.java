@@ -33,6 +33,7 @@ import com.weihua.util.EmailUtil;
 import com.weihua.util.EmailUtil.SendEmailInfo;
 import com.weihua.util.ExceptionUtil;
 import com.weihua.util.GsonUtil;
+import com.weihua.util.DateUtil.TimePeriod;
 
 /**
  * @author chengwei2
@@ -182,6 +183,15 @@ public class FamilyAssistant extends BaseAssistant {
 		boolean isHoliday = holidayArrangementDao.findIsHoliday(DateUtil.getDateFormat(new Date()));
 		List<Map<String, Object>> hourseWorkList = familyDao.findRecordListByTime("00:00", "23:59",
 				isHoliday ? AssistantConstant.FAMILY_ASSISTANT_STRING_6 : AssistantConstant.FAMILY_ASSISTANT_STRING_7);
+
+		Date tempDate;
+		TimePeriod timePeriod;
+		for (Map<String, Object> hourseWork : hourseWorkList) {
+			tempDate = DateUtil.formatDate(String.valueOf(hourseWork.get("record_time")), "hh:mm");
+			timePeriod = DateUtil.getTimePeriodByDate(tempDate);
+			hourseWork.put("time_period_color", TimePeriodColor.fromCode(timePeriod.getCode()).getValue());
+		}
+
 		model.put("hourseWorkList", hourseWorkList);
 	}
 
@@ -213,4 +223,34 @@ public class FamilyAssistant extends BaseAssistant {
 		return result;
 	}
 
+	public static enum TimePeriodColor {
+		MORNING("MORNING", "rgba(46,204,113,0.6)"), BEFORENOON("BEFORENOON", "rgba(26,188,156,0.6)"), NOON("NOON",
+				"rgba(231,76,60,0.6)"), AFTERNOON("AFTERNOON", "rgba(230,126,34,0.6)"), NIGHT("NIGHT",
+						"rgba(243,156,18,0.6)"), DEEPNIGHT("DEEPNIGHT", "rgba(192,57,43,0.6)");
+
+		private TimePeriodColor(String code, String value) {
+			this.code = code;
+			this.value = value;
+		}
+
+		private String code;
+		private String value;
+
+		public String getCode() {
+			return code;
+		}
+
+		public String getValue() {
+			return value;
+		}
+
+		public static TimePeriodColor fromCode(String code) {
+			for (TimePeriodColor entity : TimePeriodColor.values()) {
+				if (entity.getCode().equals(code)) {
+					return entity;
+				}
+			}
+			return TimePeriodColor.MORNING;
+		}
+	}
 }
