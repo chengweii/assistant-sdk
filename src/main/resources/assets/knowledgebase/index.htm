@@ -13,19 +13,15 @@
                             </div>
                         </div>
                         <div class="col-sm-12 h-pe-40 p-0">
-                            <div class="accordion tile m-b-0">
-                                <div class="panel-group block m-b-0" id="accordion">
+                            <div class="tile m-b-0">
+                                <div class="panel-group block m-b-0">
                                     <div class="panel panel-default">
                                         <div class="panel-heading">
                                             <h3 class="panel-title">
-                                                <a class="accordion-toggle collapsed active" data-toggle="collapse" data-parent="#accordion" href="#collapseThree">
-                                    				详细内容
-                                				</a>
+                                                	详细内容
                                             </h3>
                                         </div>
-                                        <div id="collapseThree" class="panel-collapse collapse" style="height: 0px;">
-                                            <div class="panel-body h-pc-10" id="${assistantName}-doc" style="height:18pc;max-height: 18pc;">
-                                            </div>
+                                        <div class="panel-body h-pc-10" id="${assistantName}-doc" style="height:18pc;max-height: 18pc;">
                                         </div>
                                     </div>
                                 </div>
@@ -40,10 +36,10 @@
                     <div class="tile-body h-pc-50 p-0">
                         <div class="listview narrow sortable ui-sortable">
                         	<% for(item in knowledgeList){ %>
-                            <div class="media p-l-5 ${assistantName}-item" style="border-bottom: 1px solid rgba(255, 255, 255, 0.11);" video-url="${item.video_url}" doc-url="${item.doc_url}">
+                            <div class="media p-l-5" style="border-bottom: 1px solid rgba(255, 255, 255, 0.11);">
                                 <div class="media-body p-l-10">
-                                	<a class="t-overflow" href="javascript:void(0);">${item.title}</a><br>
-                                    <a class="btn btn-xs btn-alt m-r-5" href="${item.ppt_url}">PPT</a>
+                                	<a class="t-overflow ${assistantName}-item" video-url="${item.video_url}" doc-url="${item.doc_url}" href="javascript:void(0);">${item.title}</a><br>
+                                    <a class="btn btn-xs btn-alt m-r-5 m-t-5 m-b-5" href="${item.ppt_url}">PPT</a>
                                     <small class="text-muted">${item.description}</small>
                                 </div>
                             </div>
