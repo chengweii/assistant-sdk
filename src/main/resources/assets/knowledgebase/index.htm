@@ -2,13 +2,13 @@
 
     <div class="tile">
         <h2 class="tile-title">${assistantTitle}</h2>
-        <div class="tile-body h-pc-30 p-0">
+        <div class="tile-body h-pc-50 p-0">
             <div class="col-md-9 p-0">
                 <div class="tile m-b-0">
-                    <div class="tile-body h-pc-30 p-0">
+                    <div class="tile-body h-pc-50 p-0">
                         <div class="col-sm-12 h-pe-60 p-0" style="background: rgba(0, 0, 0, 1) !important;">
                             <div style="height:98%;width:60%;margin:0 auto;">
-                                <iframe style="height:100%;width:100%;" src="http://player.youku.com/embed/XMjczNzEyODg3Ng==" frameborder=0
+                                <iframe id="${assistantName}-video" style="height:100%;width:100%;" src="" frameborder=0
                                     'allowfullscreen'></iframe>
                             </div>
                         </div>
@@ -19,13 +19,12 @@
                                         <div class="panel-heading">
                                             <h3 class="panel-title">
                                                 <a class="accordion-toggle collapsed active" data-toggle="collapse" data-parent="#accordion" href="#collapseThree">
-                                    Collapsible Group Item #3
-                                </a>
+                                    				详细内容
+                                				</a>
                                             </h3>
                                         </div>
                                         <div id="collapseThree" class="panel-collapse collapse" style="height: 0px;">
-                                            <div class="panel-body h-pc-10">
-                                            Collapsible Group ItemCollapsible Group ItemCollapsible Group Item
+                                            <div class="panel-body h-pc-10" id="${assistantName}-doc" style="height:18pc;max-height: 18pc;">
                                             </div>
                                         </div>
                                     </div>
@@ -37,21 +36,17 @@
             </div>
             
             <div class="col-md-3 p-0">
-                <div class="tile m-b-0">
-                    <div class="tile-body h-pc-30 p-0">
+                <div class="tile m-b-0" style="back">
+                    <div class="tile-body h-pc-50 p-0">
                         <div class="listview narrow sortable ui-sortable">
-                            <div class="media p-l-5">
-                                <div class="media-body">
-                                    <small class="text-muted">Lession 1</small><br>
-                                    <a class="t-overflow" href="">Cras molestie fermentum </a>
+                        	<% for(item in knowledgeList){ %>
+                            <div class="media p-l-5 ${assistantName}-item" style="border-bottom: 1px solid rgba(255, 255, 255, 0.11);" video-url="${item.video_url}" doc-url="${item.doc_url}" ppt-url="${item.ppt_url}">
+                                <div class="media-body p-l-10">
+                                	<a class="t-overflow" href="javascript:void(0);">${item.title}</a><br>
+                                    <small class="text-muted">${item.description}</small>
                                 </div>
                             </div>
-                            <div class="media p-l-5">
-                                <div class="media-body">
-                                    <small class="text-muted">Lession 2</small><br>
-                                    <a class="t-overflow" href="">Nibh, ac semper</a>
-                                </div>
-                            </div>
+                            <%}%>
                         </div>
                     </div>
                 </div>
@@ -62,6 +57,29 @@
 
     <script>
     assistant.keepAssistantContainerUnique('${assistantName}-container');
+    $(".${assistantName}-item").click(function(){
+    	var item = $(this);
+    	var video_url = item.attr("video-url");
+    	var doc_url = item.attr("doc-url");
+    	$("#${assistantName}-video").attr("src",video_url);
+    	
+    	$("#${assistantName}-doc").html("");
+    	assistant.showLoading("${assistantName}-doc");
+    	assistant.requestData({
+			isLocationPath:true,
+			requestContent : "crossDomainAccess",
+			extraInfo:{
+				method:"GET",
+				url:doc_url
+			}
+		}, function(data) {
+			var jsonData=$.parseJSON(data);
+			if(jsonData&&jsonData.content){
+				var doc=$(jsonData.content).find("article.markdown-body");
+				$("#${assistantName}-doc").html(doc);
+			}
+		});
+    });
     </script>
 
 </div>

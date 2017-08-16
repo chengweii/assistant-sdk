@@ -79,7 +79,7 @@ public class HttpUtil {
 			if (in != null) {
 				String line = "";
 				while ((line = in.readLine()) != null) {
-					result.append(line);
+					result.append("\n").append(line);
 				}
 			}
 			return result.toString();
@@ -185,7 +185,8 @@ public class HttpUtil {
 	}
 
 	public static void main(String[] args) {
-		String content = get("http://web.sqt.gtimg.cn/q=sz000651?r=0.6450336522583517", null, 5000, 5000, "GBK");
+		String content = HttpUtil.get("https://github.com/chengweii/resource/blob/master/technology/String/String.MD",
+				null, null);
 		System.out.println(content);
 	}
 

@@ -8,6 +8,7 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 
+import com.google.common.base.Strings;
 import com.weihua.assistant.constant.AssistantConstant;
 import com.weihua.assistant.constant.AssistantType;
 import com.weihua.assistant.constant.ServiceType;
@@ -22,6 +23,7 @@ import com.weihua.database.dao.impl.MainDaoImpl;
 import com.weihua.util.CollectionUtil;
 import com.weihua.util.ExceptionUtil;
 import com.weihua.util.GsonUtil;
+import com.weihua.util.HttpUtil;
 
 /**
  * @author chengwei2
@@ -94,6 +96,26 @@ public class MainAssistant extends BaseAssistant {
 			model.put("assistantList", getAssistantMap());
 		}
 		return response(model, "main");
+	}
+
+	@ServiceLocation(value = "crossDomainAccess")
+	public Response crossDomainAccess(BaseRequest request) {
+		Map<String, Object> model = new HashMap<String, Object>();
+		if (!Strings.isNullOrEmpty(request.getExtraInfo())) {
+			Map<String, String> requestParams = GsonUtil.getMapFromJson(request.getExtraInfo());
+			if (requestParams != null) {
+				String content = "";
+				Map<String, String> params = GsonUtil.getMapFromJson(requestParams.get("params"));
+				Map<String, String> headers = GsonUtil.getMapFromJson(requestParams.get("headers"));
+				if ("GET".equalsIgnoreCase(requestParams.get("method"))) {
+					content = HttpUtil.get(requestParams.get("url"), params, headers);
+				} else if ("POST".equalsIgnoreCase(requestParams.get("method"))) {
+					content = HttpUtil.post(requestParams.get("url"), params, headers);
+				}
+				model.put("content", content);
+			}
+		}
+		return responseJson(model);
 	}
 
 	@ServiceLocation(value = "callAlarmService")
