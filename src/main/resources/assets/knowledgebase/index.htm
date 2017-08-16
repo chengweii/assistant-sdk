@@ -36,13 +36,14 @@
             </div>
             
             <div class="col-md-3 p-0">
-                <div class="tile m-b-0" style="back">
+                <div class="tile m-b-0" style="background:rgba(128,128,128,0.3);">
                     <div class="tile-body h-pc-50 p-0">
                         <div class="listview narrow sortable ui-sortable">
                         	<% for(item in knowledgeList){ %>
-                            <div class="media p-l-5 ${assistantName}-item" style="border-bottom: 1px solid rgba(255, 255, 255, 0.11);" video-url="${item.video_url}" doc-url="${item.doc_url}" ppt-url="${item.ppt_url}">
+                            <div class="media p-l-5 ${assistantName}-item" style="border-bottom: 1px solid rgba(255, 255, 255, 0.11);" video-url="${item.video_url}" doc-url="${item.doc_url}">
                                 <div class="media-body p-l-10">
                                 	<a class="t-overflow" href="javascript:void(0);">${item.title}</a><br>
+                                    <a class="btn btn-xs btn-alt m-r-5" href="${item.ppt_url}">PPT</a>
                                     <small class="text-muted">${item.description}</small>
                                 </div>
                             </div>

@@ -2,7 +2,6 @@ package com.weihua.util;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.ResourceBundle;
 
 import org.apache.log4j.Logger;
 
@@ -19,12 +18,17 @@ public class ConfigUtil {
 
 	private static boolean inited = false;
 
-	public static void init(ResourceBundle emailBundle) {
-		if (emailBundle != null) {
-			for (String key : emailBundle.keySet()) {
-				properties.put(key, emailBundle.getString(key));
+	public static void init(Map<String, String> configs) {
+		if (configs != null) {
+			for (String key : configs.keySet()) {
+				properties.put(key, configs.get(key));
 			}
 			inited = true;
+
+			EmailUtil.initDefaultEmailAccountInfo(properties.get("email.dataEmailUser"),
+					properties.get("email.dataEmailUserPwd"), properties.get("email.remindEmailUser"),
+					properties.get("email.notifyEmailUser"));
+			DidaListUtil.initDidaListUtil(properties.get("didalist.username"), properties.get("didalist.password"));
 		}
 	}
 }
