@@ -72,7 +72,49 @@ public class EmailUtil {
 	private EmailUtil() {
 	}
 
+	private static int overFrequencyRecoveryTime = 12 * 60 * 60 * 1000;
+
+	private static boolean overFrequencyProtect(int overFrequencyTime, Date lastOpreateTime, int overFrequencyCount,
+			int lastOpreateCount) {
+		long leftTime = 0;
+
+		if (lastOpreateTime != null
+				&& (leftTime = DateUtil.getDateDiff(new Date(), lastOpreateTime)) < overFrequencyTime) {
+			try {
+				LOGGER.error("overFrequencyProtect leftTime:" + leftTime);
+				Thread.sleep(leftTime + 100);
+			} catch (InterruptedException e) {
+				LOGGER.error("overFrequencyProtect Interrupted failed");
+				return true;
+			}
+		}
+
+		if (lastOpreateCount < overFrequencyCount) {
+			lastOpreateCount++;
+			lastOpreateTime = new Date();
+		} else {
+			if (leftTime > overFrequencyRecoveryTime) {
+				lastOpreateCount = 0;
+			}
+			LOGGER.error("overFrequencyProtect lastOpreateCount[" + lastOpreateCount + "] > overFrequencyCount["
+					+ overFrequencyCount + "]:");
+			return true;
+		}
+
+		return false;
+	}
+
+	private static final int sendEmailOverFrequencyTime = 5 * 1000;
+	private static final int sendEmailOverFrequencyCount = 100;
+	private static Date sendEmailLastOpreateTime = null;
+	private static int sendEmailLastOpreateCount = 0;
+
 	public static void sendEmail(final SendEmailInfo sendEmailInfo) {
+		if (overFrequencyProtect(sendEmailOverFrequencyTime, sendEmailLastOpreateTime, sendEmailOverFrequencyCount,
+				sendEmailLastOpreateCount)) {
+			return;
+		}
+
 		try {
 			props.setProperty(sendEmailInfo.getKeySmtp(), sendEmailInfo.getValueSmtp());
 
@@ -89,7 +131,8 @@ public class EmailUtil {
 			message.setFrom(from);
 
 			if (sendEmailInfo.getReceiveUser() != null && sendEmailInfo.getReceiveUser().contains(";")) {
-				String[] receiveUsers = sendEmailInfo.getReceiveUser().replaceAll("[^0-9@a-zA-Z\\.\\;]*", "").split(";");
+				String[] receiveUsers = sendEmailInfo.getReceiveUser().replaceAll("[^0-9@a-zA-Z\\.\\;]*", "")
+						.split(";");
 				InternetAddress[] to = new InternetAddress[receiveUsers.length];
 				int i = 0;
 				for (String receiveUser : receiveUsers) {
@@ -327,8 +370,18 @@ public class EmailUtil {
 		}
 	}
 
+	private static final int receiveEmailOverFrequencyTime = 15 * 60 * 1000;
+	private static final int receiveEmailOverFrequencyCount = 96;
+	private static Date receiveEmailLastOpreateTime = null;
+	private static int receiveEmailLastOpreateCount = 0;
+
 	public static List<EmailEntity> receiveMail(final ReceiveEmailInfo receiveEmailInfo) {
 		List<EmailEntity> mailList = new ArrayList<EmailEntity>();
+
+		if (overFrequencyProtect(receiveEmailOverFrequencyTime, receiveEmailLastOpreateTime,
+				receiveEmailOverFrequencyCount, receiveEmailLastOpreateCount)) {
+			return mailList;
+		}
 
 		URLName urln = null;
 		Store receiveStore = null;

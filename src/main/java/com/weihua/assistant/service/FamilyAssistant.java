@@ -16,6 +16,7 @@ import com.weihua.assistant.entity.request.BaseRequest;
 import com.weihua.assistant.entity.request.Request;
 import com.weihua.assistant.entity.response.Response;
 import com.weihua.assistant.service.annotation.ServiceLocation;
+import com.weihua.assistant.service.base.BaseAssistant;
 import com.weihua.database.dao.FamilyDao;
 import com.weihua.database.dao.FoodListDao;
 import com.weihua.database.dao.HolidayArrangementDao;
@@ -26,6 +27,7 @@ import com.weihua.database.dao.impl.HolidayArrangementDaoImpl;
 import com.weihua.database.dao.impl.LifeMotoDaoImpl;
 import com.weihua.util.ConfigUtil;
 import com.weihua.util.DateUtil;
+import com.weihua.util.DateUtil.TimePeriod;
 import com.weihua.util.DidaListUtil;
 import com.weihua.util.DidaListUtil.Task;
 import com.weihua.util.DidaListUtil.Task.Item;
@@ -34,7 +36,6 @@ import com.weihua.util.EmailUtil;
 import com.weihua.util.EmailUtil.SendEmailInfo;
 import com.weihua.util.ExceptionUtil;
 import com.weihua.util.GsonUtil;
-import com.weihua.util.DateUtil.TimePeriod;
 
 /**
  * @author chengwei2
@@ -141,14 +142,8 @@ public class FamilyAssistant extends BaseAssistant {
 
 	@ServiceLocation(value = "getHourseWorkByTime")
 	public Response getHourseWorkByTime(BaseRequest request) {
-		ServiceRemindTimeConfig serviceRemindTimeConfig = getServiceRemindTimeConfig(request);
-		if (serviceRemindTimeConfig == null)
-			return null;
-
-		String remindTime = serviceRemindTimeConfig.remindTimeConfig.get("remindTime");
-
 		Map<String, Object> model = new HashMap<String, Object>();
-		if (isTriggerServiceReminding(ServiceTriggerPeriod.DAY, remindTime, request)) {
+		if (isTriggerServiceReminding(request)) {
 			bindHourseWorkModel(model);
 
 			SendEmailInfo info = new SendEmailInfo();

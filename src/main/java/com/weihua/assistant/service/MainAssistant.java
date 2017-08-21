@@ -18,6 +18,7 @@ import com.weihua.assistant.entity.request.Request;
 import com.weihua.assistant.entity.response.BaseResponse;
 import com.weihua.assistant.entity.response.Response;
 import com.weihua.assistant.service.annotation.ServiceLocation;
+import com.weihua.assistant.service.base.BaseAssistant;
 import com.weihua.database.dao.MainDao;
 import com.weihua.database.dao.impl.MainDaoImpl;
 import com.weihua.util.CollectionUtil;

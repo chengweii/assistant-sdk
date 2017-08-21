@@ -10,6 +10,7 @@ import com.weihua.assistant.entity.request.BaseRequest;
 import com.weihua.assistant.entity.request.Request;
 import com.weihua.assistant.entity.response.Response;
 import com.weihua.assistant.service.annotation.ServiceLocation;
+import com.weihua.assistant.service.base.BaseAssistant;
 import com.weihua.database.dao.KnowledgeListDao;
 import com.weihua.database.dao.impl.KnowledgeListDaoImpl;
 import com.weihua.util.ExceptionUtil;
