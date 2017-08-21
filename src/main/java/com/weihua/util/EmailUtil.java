@@ -440,7 +440,7 @@ public class EmailUtil {
 					entity.setSubject(subject);
 					messageLog.append("subject:").append(subject).append(Config.LOG_SPERATOR);
 					entity.setContent(bodytext.toString());
-					messageLog.append("content:").append(entity.getContent()).append(Config.LOG_SPERATOR);
+					// messageLog.append("content:").append(entity.getContent()).append(Config.LOG_SPERATOR);
 					String sendTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
 							.format(((MimeMessage) messages[i]).getSentDate());
 					entity.setSendTime(sendTime);
