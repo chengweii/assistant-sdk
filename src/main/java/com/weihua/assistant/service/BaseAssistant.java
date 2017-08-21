@@ -155,12 +155,14 @@ public abstract class BaseAssistant implements Assistant {
 			BaseRequest request) {
 
 		if (ServiceTriggerPeriod.DAY == serviceTriggerPeriod) {
-			String currentTime = DateUtil.getDateFormat(new Date(), "HH:mm");
+			Date currentDate = new Date();
+			String currentTime = DateUtil.getDateFormat(currentDate, "HH:mm");
+			String remindDate = DateUtil.getDateFormat(currentDate, "yyyy-MM-dd ") + remindTime;
 			if (currentTime.equals(remindTime)) {
 				HistoryRecord lastHistoryRecord = Context.findLastBackAssistantHistory(request.getAssistantType(),
 						request.getOriginRequest());
-				return lastHistoryRecord == null
-						|| !remindTime.equals(DateUtil.getDateFormat(lastHistoryRecord.getCreateTime(), "HH:mm"));
+				return lastHistoryRecord == null || !remindDate
+						.equals(DateUtil.getDateFormat(lastHistoryRecord.getCreateTime(), "yyyy-MM-dd HH:mm"));
 			}
 		} else if (ServiceTriggerPeriod.SECOND == serviceTriggerPeriod) {
 			HistoryRecord lastHistoryRecord = Context.findLastBackAssistantHistory(request.getAssistantType(),
