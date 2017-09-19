@@ -28,7 +28,7 @@ import com.weihua.util.HttpUtil;
 
 /**
  * @author chengwei2
- * @category 核心助手
+ * @category Base Service for all
  */
 public class MainAssistant extends BaseAssistant {
 	private static Logger LOGGER = Logger.getLogger(MainAssistant.class);

@@ -6,7 +6,7 @@ import com.weihua.assistant.service.base.BaseAssistant;
 
 /**
  * @author chengwei2
- * @category 健康
+ * @category Health advice;Common diseases;Food therapy;Mental health;Physical exercise;
  */
 public class HealthyAssistant extends BaseAssistant {
 

@@ -6,7 +6,7 @@ import com.weihua.assistant.service.base.BaseAssistant;
 
 /**
  * @author chengwei2
- * @category 出行
+ * @category Scenic spot introduction;Road condition information;
  */
 public class TravelAssistant extends BaseAssistant {
 

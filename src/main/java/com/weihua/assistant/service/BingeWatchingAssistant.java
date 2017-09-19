@@ -6,7 +6,7 @@ import com.weihua.assistant.service.base.BaseAssistant;
 
 /**
  * @author chengwei2
- * @category 追剧
+ * @category BingeWatching service:TV play,latest movie;
  */
 public class BingeWatchingAssistant extends BaseAssistant {
 

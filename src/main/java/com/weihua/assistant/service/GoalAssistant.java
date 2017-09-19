@@ -18,7 +18,7 @@ import com.weihua.util.GsonUtil;
 
 /**
  * @author chengwei2
- * @category 目标规划
+ * @category Plan infomation;Goal infomation;
  */
 public class GoalAssistant extends BaseAssistant {
 

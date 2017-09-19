@@ -22,7 +22,7 @@ import com.weihua.util.GsonUtil;
 
 /**
  * @author chengwei2
- * @category 日程
+ * @category Schedule Service
  */
 public class ScheduleAssistant extends BaseAssistant {
 

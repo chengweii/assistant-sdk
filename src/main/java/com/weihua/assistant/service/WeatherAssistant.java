@@ -6,7 +6,7 @@ import com.weihua.assistant.service.base.BaseAssistant;
 
 /**
  * @author chengwei2
- * @category 天气
+ * @category Weather information;Dressing index;Dietary advice;Mood suggestion;
  */
 public class WeatherAssistant extends BaseAssistant {
 

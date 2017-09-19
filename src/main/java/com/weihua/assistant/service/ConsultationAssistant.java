@@ -6,7 +6,7 @@ import com.weihua.assistant.service.base.BaseAssistant;
 
 /**
  * @author chengwei2
- * @category 咨询
+ * @category Conversation;Consultation;Experience sharing;Wikipedia customer service;
  */
 public class ConsultationAssistant extends BaseAssistant {
 

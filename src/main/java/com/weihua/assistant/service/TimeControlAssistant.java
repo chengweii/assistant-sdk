@@ -6,10 +6,11 @@ import com.weihua.assistant.service.base.BaseAssistant;
 
 /**
  * @author chengwei2
- * @category Work arrangement,suggestion;Process attention;Business promotion;
+ * @category Time record;Time consuming summary;Real-time recommendation for Time using;
  */
-public class WorkAssistant extends BaseAssistant {
-
+public class TimeControlAssistant extends BaseAssistant {
+	/*
+	 */
 	@Override
 	public Response getResponse(Request request) {
 		// TODO Auto-generated method stub

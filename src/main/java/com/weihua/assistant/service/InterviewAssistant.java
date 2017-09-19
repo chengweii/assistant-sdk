@@ -18,7 +18,7 @@ import com.weihua.util.GsonUtil;
 
 /**
  * @author chengwei2
- * @category 面试
+ * @category Interview questions;Other questions;
  */
 public class InterviewAssistant extends BaseAssistant {
 

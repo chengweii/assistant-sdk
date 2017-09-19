@@ -39,7 +39,7 @@ import com.weihua.util.GsonUtil;
 
 /**
  * @author chengwei2
- * @category 家庭
+ * @category Family service:housework,plan,future,commodity purchasing;
  */
 public class FamilyAssistant extends BaseAssistant {
 

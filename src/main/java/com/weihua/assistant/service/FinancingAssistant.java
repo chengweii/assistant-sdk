@@ -26,7 +26,7 @@ import com.weihua.util.HttpUtil;
 
 /**
  * @author chengwei2
- * @category 财务
+ * @category Financing service:distribution,;Stock service:advice,analysis;
  */
 public class FinancingAssistant extends BaseAssistant {
 

@@ -6,7 +6,7 @@ import com.weihua.assistant.service.base.BaseAssistant;
 
 /**
  * @author chengwei2
- * @category 饮食
+ * @category Cookbook;
  */
 public class DietAssistant extends BaseAssistant {
 

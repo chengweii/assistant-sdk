@@ -6,7 +6,7 @@ import com.weihua.assistant.service.base.BaseAssistant;
 
 /**
  * @author chengwei2
- * @category 育儿
+ * @category Diet development;Education story;
  */
 public class ParentingAssistant extends BaseAssistant {
 	@Override

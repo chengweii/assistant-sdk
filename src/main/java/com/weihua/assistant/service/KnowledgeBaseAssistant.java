@@ -17,7 +17,7 @@ import com.weihua.util.ExceptionUtil;
 
 /**
  * @author chengwei2
- * @category 知识库
+ * @category Knowledge base service
  */
 public class KnowledgeBaseAssistant extends BaseAssistant {
 
