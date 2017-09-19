@@ -4,6 +4,7 @@ public class AlarmInfo {
 	private String title;
 	private String content;
 	private String icon;
+	private String image;
 
 	public String getTitle() {
 		return title;
@@ -27,6 +28,14 @@ public class AlarmInfo {
 
 	public void setIcon(String icon) {
 		this.icon = icon;
+	}
+
+	public String getImage() {
+		return image;
+	}
+
+	public void setImage(String image) {
+		this.image = image;
 	}
 
 }
