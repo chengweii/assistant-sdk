@@ -13,6 +13,7 @@ import com.weihua.assistant.entity.request.BaseRequest;
 import com.weihua.assistant.entity.response.BaseResponse;
 import com.weihua.assistant.entity.response.Response;
 import com.weihua.assistant.service.Assistant;
+import com.weihua.assistant.service.annotation.BackServiceLocation;
 import com.weihua.assistant.service.annotation.ServiceLocation;
 import com.weihua.util.ExceptionUtil;
 import com.weihua.util.GsonUtil;
@@ -141,6 +142,10 @@ public abstract class BaseAssistant extends ServiceAssistant {
 		for (Method method : this.getClass().getDeclaredMethods()) {
 			ServiceLocation serviceLocation = method.getAnnotation(ServiceLocation.class);
 			if (serviceLocation != null && serviceLocation.value().equals(request.getContent())) {
+				return (Response) method.invoke(this, request);
+			}
+			BackServiceLocation backServiceLocation = method.getAnnotation(BackServiceLocation.class);
+			if (backServiceLocation != null && backServiceLocation.value().equals(request.getContent())) {
 				return (Response) method.invoke(this, request);
 			}
 		}

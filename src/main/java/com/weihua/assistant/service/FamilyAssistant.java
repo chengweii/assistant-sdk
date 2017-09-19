@@ -15,6 +15,7 @@ import com.weihua.assistant.constant.FoodType;
 import com.weihua.assistant.entity.request.BaseRequest;
 import com.weihua.assistant.entity.request.Request;
 import com.weihua.assistant.entity.response.Response;
+import com.weihua.assistant.service.annotation.BackServiceLocation;
 import com.weihua.assistant.service.annotation.ServiceLocation;
 import com.weihua.assistant.service.base.BaseAssistant;
 import com.weihua.database.dao.FamilyDao;
@@ -140,7 +141,7 @@ public class FamilyAssistant extends BaseAssistant {
 		return null;
 	}
 
-	@ServiceLocation(value = "getHourseWorkByTime")
+	@BackServiceLocation(value = "getHourseWorkByTime")
 	public Response getHourseWorkByTime(BaseRequest request) {
 		Map<String, Object> model = new HashMap<String, Object>();
 		if (isTriggerServiceReminding(request)) {
