@@ -382,9 +382,9 @@ public class DateUtil {
 		double hour = Double.valueOf(date.getHours()) + Double.valueOf(date.getMinutes()) / 60d;
 		if (hour >= 5 && hour < 8) {
 			return TimePeriod.MORNING;
-		} else if (hour >= 8 && hour < 12) {
+		} else if (hour >= 8 && hour < 11) {
 			return TimePeriod.BEFORENOON;
-		} else if (hour >= 12 && hour < 13) {
+		} else if (hour >= 11 && hour < 13) {
 			return TimePeriod.NOON;
 		} else if (hour >= 13 && hour < 18) {
 			return TimePeriod.AFTERNOON;
