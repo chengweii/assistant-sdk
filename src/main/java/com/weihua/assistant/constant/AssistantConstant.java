@@ -18,4 +18,6 @@ public class AssistantConstant {
 	public static final String FAMILY_ASSISTANT_STRING_12 = "早上好，这是今天的家务安排清单，请知晓。";
 	public static final String FAMILY_ASSISTANT_STRING_13 = "日家务安排清单";
 	public static final String FAMILY_ASSISTANT_EMAIL_HOURSEWORK_REMINDEMAILUSER = "email.hourseWork.remindEmailUser";
+	
+	public static final String DIETASSISTANT_STRING_1 = "推荐";
 }
