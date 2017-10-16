@@ -21,7 +21,7 @@ public class HolidayArrangementDaoImpl extends BaseDao implements HolidayArrange
 		if (result != null) {
 			return "0".equals(result.get("is_workday"));
 		} else {
-			Date input = DateUtil.formatDate(holidayDate, "yyyy-MM-dd");
+			Date input = DateUtil.getDateFormat(holidayDate);
 			Calendar cal = Calendar.getInstance();
 			cal.setTime(input);
 			return cal.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY

@@ -1,0 +1,75 @@
+<html>
+  <body>
+	<table border="0" align="center" cellpadding="0" cellspacing="0">
+      <tbody>
+        <tr>
+          <td height="10"></td>
+        </tr>
+      </tbody>
+    </table>
+    <table  bgcolor="#3b3b3b" style="background-size: cover; background-position: center center;border-collapse: collapse;border-radius:6px; background-image: url('${lifeMotoImage}');" width="100%" border="0" align="center" cellpadding="0" cellspacing="0" class="currentTable">
+      <tbody>
+        <tr>
+          <td align="center">
+            <table align="center" border="0" cellpadding="0" cellspacing="0">
+              <tbody>
+                <tr>
+                  <td align="center" width="600" class="editable">
+                    <table width="90%" border="0" align="center" cellpadding="0" cellspacing="0">
+                      <tbody>
+                        <tr>
+                          <td height="15"></td>
+                        </tr>
+                        <tr align="center">
+                          <td  style="font-family: 'Open Sans', Arial, sans-serif; font-size:10px; color:#ffffff;letter-spacing: 8px;font-weight: bold;text-transform: uppercase;">
+                            <singleline>${lifeMoto}</singleline></td>
+                        </tr>
+                        <tr>
+                          <td height="45"></td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <table border="0" align="center" cellpadding="0" cellspacing="0">
+      <tbody>
+        <tr>
+          <td height="10"></td>
+        </tr>
+      </tbody>
+    </table>
+    <table style="border-radius:4px; border:1px solid rgba(0,0,0,0.5);" align="center" width="100%" border="0" cellspacing="0" cellpadding="0">
+      <tbody>
+        <tr>
+          <td colspan="2" data-link-style="text-decoration:none; color:#ffffff;" data-size="Table Title" data-color="Table Title" data-bgcolor="Title BG" align="left" height="50" style="background-color:rgba(0,0,0,0.5);font-family:Century Gothic, Arial, Sans-serif;font-size: 18px;color:#ffffff;line-height:28px;font-weight:bold;padding-left:10px;">
+            <singleline>当前日程</singleline></td>
+        </tr>
+        <!--end title-->
+        <% for(item in scheduleList){ %>
+        <tr>
+          <td  height="50" width="55" align="left" style="border-bottom:1px solid #EAEAEA;font-family:Open sans, Arial, Sans-serif; font-size:16px; color:#808E8E;line-height:16px;">
+            <a style="background-color:${item.time_period_color};padding:5px;font-size: 13px;font-weight:bold;color:#ffffff;border-radius: 5px;margin-left:5px;margin-right:5px;">${item.schedule_time}</a></td>
+		  <td  height="50" align="left" style="border-bottom:1px solid #EAEAEA;font-family:Open sans, Arial, Sans-serif; font-size:16px; color:#808E8E;line-height:16px;">
+            <p style="font-size:15px;margin-top:5px;margin-bottom:5px;">${item.schedule_title}</p>
+			<p style="font-size:12px;margin-top:0px;margin-bottom:5px;">${item.schedule_content}</p>
+          </td>
+        </tr>
+        <%}%>
+        </tbody>
+    </table>
+    <table border="0" align="center" cellpadding="0" cellspacing="0">
+      <tbody>
+        <tr>
+          <td height="10"></td>
+        </tr>
+      </tbody>
+	</table>
+  </body>
+
+</html>

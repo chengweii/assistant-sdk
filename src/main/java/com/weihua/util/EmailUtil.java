@@ -141,7 +141,7 @@ public class EmailUtil {
 				}
 				message.setRecipients(Message.RecipientType.TO, to);
 			} else {
-				InternetAddress to = new InternetAddress(sendEmailInfo.getReceiveUser());
+				InternetAddress to = new InternetAddress(sendEmailInfo.getReceiveUser().replaceAll("[^0-9@a-zA-Z\\.\\;]*", ""));
 				message.setRecipient(Message.RecipientType.TO, to);
 			}
 

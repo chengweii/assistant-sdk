@@ -32,8 +32,8 @@ public class DidaListUtil {
 
 	public static void main(String[] args) throws Exception {
 		initUtilConfig();
-		Task task = DidaListUtil.getTaskListFromDida365(TaskType.CURRENT_WORK);
-		System.out.println(task);
+		List<Task> taskList = DidaListUtil.getTaskListFromDida365(TaskType.CURRENT_SCHEDULE, TaskStatus.UNFINISH);
+		LOGGER.info(taskList);
 	}
 
 	private static String tokenHolder = null;
@@ -108,7 +108,7 @@ public class DidaListUtil {
 		return taskList;
 	}
 
-	public static Task getTaskListFromDida365(TaskType taskType) throws Exception {
+	public static List<Task> getTaskListFromDida365(TaskType taskType, TaskStatus taskStatus) throws Exception {
 		login();
 		List<Map<String, Object>> projectList = getProjectList();
 		if (!CollectionUtil.isEmpty(projectList)) {
@@ -120,17 +120,19 @@ public class DidaListUtil {
 				}
 			}
 			String endTime = DateUtil.getDateFormat(new Date(), DateUtil.DATETIME_DEFAULT_FORMAT);
-			List<Task> taskList = getTaskList(projectId, endTime, "100", TaskStatus.UNFINISH);
+			List<Task> taskList = getTaskList(projectId, endTime, "100",
+					taskStatus == null ? TaskStatus.UNFINISH : taskStatus);
 			if (!CollectionUtil.isEmpty(taskList)) {
 				LOGGER.info("Query task size:" + taskList.size());
+				return taskList;
 			}
 		}
 		return null;
 	}
 
 	public static enum TaskType {
-		CURRENT_TRIFLES("CurrentTrifles", "当前琐事"), CURRENT_WORK("CurrentWork", "我的工作"), FUTURE_TRIFLES("FutureTrifles",
-				"未来琐事"), FUTURE_WORK("FutureWork", "未来工作"), TECHNICAL_STUDY("TechnicalStudy", "技术研究");
+		CURRENT_SCHEDULE("CurrentSchedule", "当前日程"), MY_WORKS("MyWorks", "我的工作"), FUTURE_TRIFLES("FutureTrifles",
+				"待办琐事"), MY_DAILY("MyDaily", "我的日常");
 
 		private TaskType(String code, String value) {
 			this.code = code;

@@ -24,39 +24,40 @@ public class DateUtil {
 	public static final String TIME_DEFAULT_FORMAT = "HH:mm:ss";
 
 	// 日期格式化
-	private static DateFormat dateFormat = null;
+	private static ThreadLocal<DateFormat> dateFormat = new ThreadLocal<DateFormat>() {
+		@Override
+		protected DateFormat initialValue() {
+			return new SimpleDateFormat(DATE_DEFAULT_FORMAT);
+		}
+	};
 
 	// 时间格式化
-	private static DateFormat dateTimeFormat = null;
-
-	private static DateFormat timeFormat = null;
-
-	private static Calendar gregorianCalendar = null;
-
-	static {
-		dateFormat = new SimpleDateFormat(DATE_DEFAULT_FORMAT);
-		dateTimeFormat = new SimpleDateFormat(DATETIME_DEFAULT_FORMAT);
-		timeFormat = new SimpleDateFormat(TIME_DEFAULT_FORMAT);
-		gregorianCalendar = new GregorianCalendar();
-	}
-
-	/**
-	 * 日期格式化yyyy-MM-dd
-	 * 
-	 * @param date
-	 * @return
-	 */
-	public static Date formatDate(String date, String format) {
-		try {
-			return new SimpleDateFormat(format).parse(date);
-		} catch (ParseException e) {
-			e.printStackTrace();
+	private static ThreadLocal<DateFormat> dateTimeFormat = new ThreadLocal<DateFormat>() {
+		@Override
+		protected DateFormat initialValue() {
+			return new SimpleDateFormat(DATETIME_DEFAULT_FORMAT);
 		}
-		return null;
-	}
+	};
+
+	private static ThreadLocal<DateFormat> timeFormat = new ThreadLocal<DateFormat>() {
+		@Override
+		protected DateFormat initialValue() {
+			return new SimpleDateFormat(TIME_DEFAULT_FORMAT);
+		}
+	};
+
+	public static final String TIME_HH_MM_FORMAT = "HH:mm";
+
+	private static ThreadLocal<DateFormat> timeHHMMFormat = new ThreadLocal<DateFormat>() {
+		@Override
+		protected DateFormat initialValue() {
+			return new SimpleDateFormat(TIME_HH_MM_FORMAT);
+		}
+	};
+
+	private static ThreadLocal<GregorianCalendar> gregorianCalendar = new ThreadLocal<GregorianCalendar>();
 
 	public static void main(String[] args) throws Exception {
-		System.out.println(formatDate("08:00", "hh:mm"));
 	}
 
 	/**
@@ -66,7 +67,7 @@ public class DateUtil {
 	 * @return
 	 */
 	public static String getDateFormat(Date date) {
-		return dateFormat.format(date);
+		return dateFormat.get().format(date);
 	}
 
 	/**
@@ -76,7 +77,7 @@ public class DateUtil {
 	 * @return
 	 */
 	public static String getDateTimeFormat(Date date) {
-		return dateTimeFormat.format(date);
+		return dateTimeFormat.get().format(date);
 	}
 
 	/**
@@ -86,7 +87,7 @@ public class DateUtil {
 	 * @return HH:mm:ss
 	 */
 	public static String getTimeFormat(Date date) {
-		return timeFormat.format(date);
+		return timeFormat.get().format(date);
 	}
 
 	/**
@@ -111,7 +112,7 @@ public class DateUtil {
 	 */
 	public static Date getDateFormat(String date) {
 		try {
-			return dateFormat.parse(date);
+			return dateFormat.get().parse(date);
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
@@ -126,7 +127,16 @@ public class DateUtil {
 	 */
 	public static Date getDateTimeFormat(String date) {
 		try {
-			return dateTimeFormat.parse(date);
+			return dateTimeFormat.get().parse(date);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public static Date getDateTimeHHMMFormat(String date) {
+		try {
+			return timeHHMMFormat.get().parse(date);
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
@@ -139,7 +149,7 @@ public class DateUtil {
 	 * @return
 	 */
 	public static Date getNowDate() {
-		return DateUtil.getDateFormat(dateFormat.format(new Date()));
+		return DateUtil.getDateFormat(dateFormat.get().format(new Date()));
 	}
 
 	/**
@@ -157,10 +167,10 @@ public class DateUtil {
 	 * @return date
 	 */
 	public static Date getFirstDayOfWeek() {
-		gregorianCalendar.setFirstDayOfWeek(Calendar.MONDAY);
-		gregorianCalendar.setTime(new Date());
-		gregorianCalendar.set(Calendar.DAY_OF_WEEK, gregorianCalendar.getFirstDayOfWeek()); // Monday
-		return gregorianCalendar.getTime();
+		gregorianCalendar.get().setFirstDayOfWeek(Calendar.MONDAY);
+		gregorianCalendar.get().setTime(new Date());
+		gregorianCalendar.get().set(Calendar.DAY_OF_WEEK, gregorianCalendar.get().getFirstDayOfWeek()); // Monday
+		return gregorianCalendar.get().getTime();
 	}
 
 	/**
@@ -169,10 +179,10 @@ public class DateUtil {
 	 * @return date
 	 */
 	public static Date getLastDayOfWeek() {
-		gregorianCalendar.setFirstDayOfWeek(Calendar.MONDAY);
-		gregorianCalendar.setTime(new Date());
-		gregorianCalendar.set(Calendar.DAY_OF_WEEK, gregorianCalendar.getFirstDayOfWeek() + 6); // Monday
-		return gregorianCalendar.getTime();
+		gregorianCalendar.get().setFirstDayOfWeek(Calendar.MONDAY);
+		gregorianCalendar.get().setTime(new Date());
+		gregorianCalendar.get().set(Calendar.DAY_OF_WEEK, gregorianCalendar.get().getFirstDayOfWeek() + 6); // Monday
+		return gregorianCalendar.get().getTime();
 	}
 
 	/**
@@ -185,10 +195,10 @@ public class DateUtil {
 		if (date == null) {
 			return null;
 		}
-		gregorianCalendar.setFirstDayOfWeek(Calendar.MONDAY);
-		gregorianCalendar.setTime(date);
-		gregorianCalendar.set(Calendar.DAY_OF_WEEK, gregorianCalendar.getFirstDayOfWeek()); // Monday
-		return gregorianCalendar.getTime();
+		gregorianCalendar.get().setFirstDayOfWeek(Calendar.MONDAY);
+		gregorianCalendar.get().setTime(date);
+		gregorianCalendar.get().set(Calendar.DAY_OF_WEEK, gregorianCalendar.get().getFirstDayOfWeek()); // Monday
+		return gregorianCalendar.get().getTime();
 	}
 
 	/**
@@ -201,10 +211,10 @@ public class DateUtil {
 		if (date == null) {
 			return null;
 		}
-		gregorianCalendar.setFirstDayOfWeek(Calendar.MONDAY);
-		gregorianCalendar.setTime(date);
-		gregorianCalendar.set(Calendar.DAY_OF_WEEK, gregorianCalendar.getFirstDayOfWeek() + 6); // Monday
-		return gregorianCalendar.getTime();
+		gregorianCalendar.get().setFirstDayOfWeek(Calendar.MONDAY);
+		gregorianCalendar.get().setTime(date);
+		gregorianCalendar.get().set(Calendar.DAY_OF_WEEK, gregorianCalendar.get().getFirstDayOfWeek() + 6); // Monday
+		return gregorianCalendar.get().getTime();
 	}
 
 	/**
@@ -213,9 +223,9 @@ public class DateUtil {
 	 * @return date
 	 */
 	public static Date getFirstDayOfMonth() {
-		gregorianCalendar.setTime(new Date());
-		gregorianCalendar.set(Calendar.DAY_OF_MONTH, 1);
-		return gregorianCalendar.getTime();
+		gregorianCalendar.get().setTime(new Date());
+		gregorianCalendar.get().set(Calendar.DAY_OF_MONTH, 1);
+		return gregorianCalendar.get().getTime();
 	}
 
 	/**
@@ -224,11 +234,11 @@ public class DateUtil {
 	 * @return
 	 */
 	public static Date getLastDayOfMonth() {
-		gregorianCalendar.setTime(new Date());
-		gregorianCalendar.set(Calendar.DAY_OF_MONTH, 1);
-		gregorianCalendar.add(Calendar.MONTH, 1);
-		gregorianCalendar.add(Calendar.DAY_OF_MONTH, -1);
-		return gregorianCalendar.getTime();
+		gregorianCalendar.get().setTime(new Date());
+		gregorianCalendar.get().set(Calendar.DAY_OF_MONTH, 1);
+		gregorianCalendar.get().add(Calendar.MONTH, 1);
+		gregorianCalendar.get().add(Calendar.DAY_OF_MONTH, -1);
+		return gregorianCalendar.get().getTime();
 	}
 
 	/**
@@ -238,9 +248,9 @@ public class DateUtil {
 	 * @return
 	 */
 	public static Date getFirstDayOfMonth(Date date) {
-		gregorianCalendar.setTime(date);
-		gregorianCalendar.set(Calendar.DAY_OF_MONTH, 1);
-		return gregorianCalendar.getTime();
+		gregorianCalendar.get().setTime(date);
+		gregorianCalendar.get().set(Calendar.DAY_OF_MONTH, 1);
+		return gregorianCalendar.get().getTime();
 	}
 
 	/**
@@ -250,11 +260,11 @@ public class DateUtil {
 	 * @return
 	 */
 	public static Date getLastDayOfMonth(Date date) {
-		gregorianCalendar.setTime(date);
-		gregorianCalendar.set(Calendar.DAY_OF_MONTH, 1);
-		gregorianCalendar.add(Calendar.MONTH, 1);
-		gregorianCalendar.add(Calendar.DAY_OF_MONTH, -1);
-		return gregorianCalendar.getTime();
+		gregorianCalendar.get().setTime(date);
+		gregorianCalendar.get().set(Calendar.DAY_OF_MONTH, 1);
+		gregorianCalendar.get().add(Calendar.MONTH, 1);
+		gregorianCalendar.get().add(Calendar.DAY_OF_MONTH, -1);
+		return gregorianCalendar.get().getTime();
 	}
 
 	/**
@@ -264,10 +274,10 @@ public class DateUtil {
 	 * @return
 	 */
 	public static Date getDayBefore(Date date) {
-		gregorianCalendar.setTime(date);
-		int day = gregorianCalendar.get(Calendar.DATE);
-		gregorianCalendar.set(Calendar.DATE, day - 1);
-		return gregorianCalendar.getTime();
+		gregorianCalendar.get().setTime(date);
+		int day = gregorianCalendar.get().get(Calendar.DATE);
+		gregorianCalendar.get().set(Calendar.DATE, day - 1);
+		return gregorianCalendar.get().getTime();
 	}
 
 	/**
@@ -277,10 +287,10 @@ public class DateUtil {
 	 * @return
 	 */
 	public static Date getDayAfter(Date date) {
-		gregorianCalendar.setTime(date);
-		int day = gregorianCalendar.get(Calendar.DATE);
-		gregorianCalendar.set(Calendar.DATE, day + 1);
-		return gregorianCalendar.getTime();
+		gregorianCalendar.get().setTime(date);
+		int day = gregorianCalendar.get().get(Calendar.DATE);
+		gregorianCalendar.get().set(Calendar.DATE, day + 1);
+		return gregorianCalendar.get().getTime();
 	}
 
 	/**
@@ -328,12 +338,12 @@ public class DateUtil {
 		startDate = DateUtil.getDateFormat(DateUtil.getDateFormat(startDate));
 		endDate = DateUtil.getDateFormat(DateUtil.getDateFormat(endDate));
 		List<Date> dates = new ArrayList<Date>();
-		gregorianCalendar.setTime(startDate);
-		dates.add(gregorianCalendar.getTime());
-		while (gregorianCalendar.getTime().compareTo(endDate) < 0) {
+		gregorianCalendar.get().setTime(startDate);
+		dates.add(gregorianCalendar.get().getTime());
+		while (gregorianCalendar.get().getTime().compareTo(endDate) < 0) {
 			// 加1天
-			gregorianCalendar.add(Calendar.DAY_OF_MONTH, 1);
-			dates.add(gregorianCalendar.getTime());
+			gregorianCalendar.get().add(Calendar.DAY_OF_MONTH, 1);
+			dates.add(gregorianCalendar.get().getTime());
 		}
 		return dates;
 	}
