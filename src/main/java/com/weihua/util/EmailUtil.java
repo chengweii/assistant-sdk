@@ -153,7 +153,7 @@ public class EmailUtil {
 			transport.connect(sendEmailInfo.getValueSmtp(), sendEmailInfo.getSendUname(), sendEmailInfo.getSendPwd());
 			transport.sendMessage(message, message.getAllRecipients());
 			transport.close();
-			LOGGER.info("Message sent successfully:" + content);
+			LOGGER.info("Message sent successfully:" + sendEmailInfo.getHeadName());
 		} catch (Exception e) {
 			ExceptionUtil.propagate(LOGGER, e);
 		}
