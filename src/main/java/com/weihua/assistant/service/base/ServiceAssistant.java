@@ -27,15 +27,17 @@ public abstract class ServiceAssistant implements Assistant {
 			Date currentDate = new Date();
 			String currentTime = DateUtil.getDateFormat(currentDate, "HH:mm");
 			if (serviceRemindTimeConfig.remindTimes.contains(currentTime)) {
-				String remindDate = DateUtil.getDateFormat(currentDate, "yyyy-MM-dd ") + currentTime;
+				currentTime = DateUtil.getDateFormat(currentDate, "yyyy-MM-dd ") + currentTime;
 				HistoryRecord lastHistoryRecord = Context.findLastBackAssistantHistory(request.getAssistantType(),
 						request.getOriginRequest());
-				
-				LOGGER.info("ServiceAssistant remindDate:" + remindDate + "recordTime:"
-						+ DateUtil.getDateFormat(lastHistoryRecord.getCreateTime(), "yyyy-MM-dd HH:mm"));
-				
-				return lastHistoryRecord == null || !remindDate
-						.equals(DateUtil.getDateFormat(lastHistoryRecord.getCreateTime(), "yyyy-MM-dd HH:mm"));
+
+				String remindTime = "";
+				if (lastHistoryRecord != null) {
+					remindTime = DateUtil.getDateFormat(lastHistoryRecord.getCreateTime(), "yyyy-MM-dd HH:mm");
+				}
+				LOGGER.info("ServiceAssistant currentTime:" + currentTime + "remindTime:" + remindTime);
+
+				return lastHistoryRecord == null || !currentTime.equals(remindTime);
 			}
 		} else if (ServiceTriggerPeriod.SECOND == serviceRemindTimeConfig.getServiceTriggerPeriod()) {
 			HistoryRecord lastHistoryRecord = Context.findLastBackAssistantHistory(request.getAssistantType(),
