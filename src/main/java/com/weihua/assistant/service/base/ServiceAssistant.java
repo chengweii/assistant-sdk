@@ -30,6 +30,10 @@ public abstract class ServiceAssistant implements Assistant {
 				String remindDate = DateUtil.getDateFormat(currentDate, "yyyy-MM-dd ") + currentTime;
 				HistoryRecord lastHistoryRecord = Context.findLastBackAssistantHistory(request.getAssistantType(),
 						request.getOriginRequest());
+				
+				LOGGER.info("ServiceAssistant remindDate:" + remindDate + "recordTime:"
+						+ DateUtil.getDateFormat(lastHistoryRecord.getCreateTime(), "yyyy-MM-dd HH:mm"));
+				
 				return lastHistoryRecord == null || !remindDate
 						.equals(DateUtil.getDateFormat(lastHistoryRecord.getCreateTime(), "yyyy-MM-dd HH:mm"));
 			}
